@@ -1,0 +1,5 @@
+# postgresql+psycopg2://user:password@host/database
+database: postgresql+psycopg2://postgres:abc@localhost/IdeaMeritTest
+other:
+  bcrypt_rounds: 9
+  test_config: abc
