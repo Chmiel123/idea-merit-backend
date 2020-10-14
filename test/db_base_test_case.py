@@ -1,5 +1,5 @@
 import unittest
-import base_test_setup 
+import test.base_test_setup 
 from model.db import db
 
 class DBBaseTestCase(unittest.TestCase):
