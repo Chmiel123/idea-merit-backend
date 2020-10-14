@@ -2,4 +2,5 @@
 database: postgresql+psycopg2://postgres:abc@localhost/IdeaMerit
 other:
   bcrypt_rounds: 8
-  base_config: efg
+time:
+  email_verification_days: 1

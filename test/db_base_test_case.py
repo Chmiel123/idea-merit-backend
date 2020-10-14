@@ -6,8 +6,9 @@ class DBBaseTestCase(unittest.TestCase):
     """ Base Tests using a test database"""
 
     def setUp(self):
+        self.db = db
         db.session.commit()
-        db.Base.metadata.drop_all()
+        db.drop_all()
         db.Base.metadata.create_all(db.engine)
         db.session.commit()
 

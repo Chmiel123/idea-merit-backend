@@ -17,14 +17,14 @@ class AccountRegistration(Resource):
         new_account = Account(
             name = data['username'],
         )
-        new_direct_login = LoginDirect(
+        new_login_direct = LoginDirect(
             password = LoginDirect.generate_hash(data['password']),
             account = new_account
         )
 
         try:
             new_account.save_to_db()
-            new_direct_login.save_to_db()
+            new_login_direct.save_to_db()
             access_token = create_access_token(identity = data['username'])
             refresh_token = create_refresh_token(identity = data['username'])
             return {
@@ -44,7 +44,7 @@ class AccountLogin(Resource):
         if not current_account:
             return {'message': 'User {} doesn\'t exist'.format(data['username'])}
         
-        if LoginDirect.verify_hash(data['password'], current_account.direct_login.password):
+        if LoginDirect.verify_hash(data['password'], current_account.login_direct.password):
             access_token = create_access_token(identity = data['username'])
             refresh_token = create_refresh_token(identity = data['username'])
             return {
@@ -95,9 +95,9 @@ class CurrentAccount(Resource):
             'id': str(account.id),
             'name': account.name,
             'domain': account.domain,
-            'registered_date': str(account.registered_date),
+            'created_date': str(account.created_date),
             'login': {
-                'password': account.direct_login.password
+                'password': account.login_direct.password
             }
         }
 

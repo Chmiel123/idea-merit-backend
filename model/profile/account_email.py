@@ -1,17 +1,17 @@
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, BOOLEAN
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 import bcrypt
 from config.config import config
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
-from model.profile import account
 
-class LoginDirect(db.Base, PostgresSerializerMixin):
-    __tablename__ = 'login_direct'
+class AccountEmail(db.Base, PostgresSerializerMixin):
+    __tablename__ = 'account_email'
     __table_args__ = {'schema': 'profile'}
 
     account_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), primary_key=True, unique=True, nullable=False)
-    password = Column(TEXT, nullable=False)
+    email = Column(TEXT, nullable=False, unique=True)
+    verified = Column(BOOLEAN, nullable=False, default=False)
 
     def save_to_db(self):
         db.session.add(self)

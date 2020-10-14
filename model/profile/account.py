@@ -1,12 +1,11 @@
 import uuid
 import datetime
-from sqlalchemy import Column, UniqueConstraint, String, DateTime
+from sqlalchemy import Column, UniqueConstraint, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID, TEXT
-import bcrypt
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
-from model.profile import login_direct
+from model.profile import login_direct, account_email
 
 class Account(db.Base, PostgresSerializerMixin):
     __tablename__ = 'account'
@@ -15,10 +14,11 @@ class Account(db.Base, PostgresSerializerMixin):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     name = Column(TEXT, nullable=False, unique=True)
     domain = Column(TEXT, nullable=True)
-    registered_date = Column(DateTime, default=datetime.datetime.utcnow)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
-    direct_login = relationship('LoginDirect', uselist=False, backref = 'account')
-
+    login_direct = relationship('LoginDirect', uselist=False, backref = 'account')
+    emails = relationship('AccountEmail', backref = 'account')
+    
     UniqueConstraint('name', 'domain')
 
     def save_to_db(self):
