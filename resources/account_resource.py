@@ -2,10 +2,18 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity
 from model.profile.account import Account
 from model.profile.login_direct import LoginDirect
+from model.profile.account_email import AccountEmail
+from model.profile.email_verification import EmailVerification
 
 parser = reqparse.RequestParser()
 parser.add_argument('username', help = 'This field cannot be blank', required = True)
 parser.add_argument('password', help = 'This field cannot be blank', required = True)
+
+email_parser = reqparse.RequestParser()
+email_parser.add_argument('email', help = 'This field cannot be blank', required = True)
+
+email_verification_parser = reqparse.RequestParser()
+email_verification_parser.add_argument('verify', help = 'This field cannot be blank', required = True)
 
 class AccountRegistration(Resource):
     def post(self):
@@ -98,8 +106,47 @@ class CurrentAccount(Resource):
             'created_date': str(account.created_date),
             'login': {
                 'password': account.login_direct.password
-            }
+            },
+            'emails': dict(account.emails)
         }
+
+class Email(Resource):
+    @jwt_required
+    def get(self):
+        account = Account.find_by_username(get_jwt_identity())
+        return {
+            'emails': [{'email': x.email, 'verified': x.verified} for x in account.emails]
+        }
+
+    @jwt_required
+    def post(self):
+        data = email_parser.parse_args()
+
+        account = Account.find_by_username(get_jwt_identity())
+        ev = None
+
+        for email in account.emails:
+            if email == data['email']:
+                if not email.verified:
+                    ev = EmailVerification.generate_verification(email)
+                    #TODO: send actual email
+                    return {'message': 'Resent verification email'}
+                return {'message': 'Email already exists'}
+
+        account_email = AccountEmail(
+            account = account,
+            email = data['email']
+        )
+        account_email.save_to_db()
+        ev = EmailVerification.generate_verification(account_email)
+        #TODO: send actual email
+        return {'message': 'Resent verification email'}
+
+class EmailVerify(Resource):
+    def get(self):
+        data = email_verification_parser.parse_args()
+        ev = EmailVerification.verify(data['verify'])
+        return {'message': 'Ok'}
 
 # class Users(Resource):
 #     def get(self):

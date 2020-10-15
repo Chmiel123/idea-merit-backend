@@ -3,6 +3,7 @@ import json
 
 from test.app_base_test_case import AppBaseTestCase
 from model.profile.account import Account
+from model.profile.email_verification import EmailVerification
 
 def register(app, username, password):
     return app.post(
@@ -29,6 +30,37 @@ class UserResourceTest(AppBaseTestCase):
         register(self.app, 'user', 'pass')
         result = login(self.app, 'user', 'pass')
         self.assertEqual(result.json['message'], 'Logged in as user')
+
+    def test_email(self):
+        register(self.app, 'user', 'pass')
+        access_token = login(self.app, 'user', 'pass').json['access_token']
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.com'),
+            follow_redirects=True
+        )
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.net'),
+            follow_redirects=True
+        )
+        result = self.app.get(
+            '/account/email',
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"},
+            follow_redirects=True,
+        )
+        self.assertEqual(result.json['emails'][0]['email'], 'user@example.com')
+        self.assertEqual(result.json['emails'][1]['email'], 'user@example.net')
+        ev = self.db.session.query(EmailVerification).filter_by(email = 'user@example.com').first()
+        result = self.app.get(
+            '/account/email/verify?verify=abc',
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"},
+            follow_redirects=True,
+        )
+
+
 
     def test_secret(self):
         register(self.app, 'user', 'pass')
