@@ -59,7 +59,47 @@ class UserResourceTest(AppBaseTestCase):
             headers={"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"},
             follow_redirects=True,
         )
+        self.assertEqual(result.json['message'], 'Could not verify email address')
+        result = self.app.get(
+            f'/account/email/verify?verify={ev.verification_key}',
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"},
+            follow_redirects=True,
+        )
+        self.assertEqual(result.json['message'], 'Ok')
 
+    def test_email_limit(self):
+        register(self.app, 'user', 'pass')
+        access_token = login(self.app, 'user', 'pass').json['access_token']
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.com'),
+            follow_redirects=True
+        )
+        self.assertEqual(result.json['message'], 'Sent verification email')
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.net'),
+            follow_redirects=True
+        )
+        self.assertEqual(result.json['message'], 'Sent verification email')
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@info.net'),
+            follow_redirects=True
+        )
+        self.assertEqual(result.json['message'], 'Sent verification email')
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@info.com'),
+            follow_redirects=True
+        )
+        self.assertEqual(result.json['message'], 'Maximum number of emails per account reached')
+
+        
 
 
     def test_secret(self):

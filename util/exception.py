@@ -1,0 +1,4 @@
+
+
+class IMException(Exception):
+    pass

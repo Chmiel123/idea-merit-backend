@@ -2,5 +2,6 @@
 database: postgresql+psycopg2://postgres:abc@localhost/IdeaMerit
 other:
   bcrypt_rounds: 8
-time:
-  email_verification_days: 1
+email:
+  max_emails_per_account: 3
+  email_verification_hours: 48

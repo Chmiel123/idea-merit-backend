@@ -4,6 +4,8 @@ from model.profile.account import Account
 from model.profile.login_direct import LoginDirect
 from model.profile.account_email import AccountEmail
 from model.profile.email_verification import EmailVerification
+from logic import email_logic
+from config.config import config
 
 parser = reqparse.RequestParser()
 parser.add_argument('username', help = 'This field cannot be blank', required = True)
@@ -11,9 +13,10 @@ parser.add_argument('password', help = 'This field cannot be blank', required = 
 
 email_parser = reqparse.RequestParser()
 email_parser.add_argument('email', help = 'This field cannot be blank', required = True)
+email_parser.add_argument('primary')
 
 email_verification_parser = reqparse.RequestParser()
-email_verification_parser.add_argument('verify', help = 'This field cannot be blank', required = True)
+email_verification_parser.add_argument('verify', help = 'This field cannot be blank', location='args', required = True)
 
 class AccountRegistration(Resource):
     def post(self):
@@ -128,25 +131,32 @@ class Email(Resource):
         for email in account.emails:
             if email == data['email']:
                 if not email.verified:
-                    ev = EmailVerification.generate_verification(email)
+                    ev = email_logic.generate_verification(email)
                     #TODO: send actual email
                     return {'message': 'Resent verification email'}
                 return {'message': 'Email already exists'}
 
+        max_emails = config['email']['max_emails_per_account']
+        if len(account.emails) >= max_emails:
+            return {'message': 'Maximum number of emails per account reached', 'value': max_emails}
+        
         account_email = AccountEmail(
             account = account,
             email = data['email']
         )
         account_email.save_to_db()
-        ev = EmailVerification.generate_verification(account_email)
+        ev = email_logic.generate_verification(account_email.email)
         #TODO: send actual email
-        return {'message': 'Resent verification email'}
+        return {'message': 'Sent verification email'}
 
 class EmailVerify(Resource):
     def get(self):
         data = email_verification_parser.parse_args()
-        ev = EmailVerification.verify(data['verify'])
-        return {'message': 'Ok'}
+        result = email_logic.verify(data['verify'])
+        if result:
+            return {'message': 'Ok'}
+        else:
+            return {'message': 'Could not verify email address'}
 
 # class Users(Resource):
 #     def get(self):

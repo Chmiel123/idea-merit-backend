@@ -17,4 +17,7 @@ class AccountEmail(db.Base, PostgresSerializerMixin):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
-    
+
+    @staticmethod
+    def find_by_email(email):
+        return db.session.query(AccountEmail).filter_by(email = email).first()
