@@ -129,12 +129,14 @@ class Email(Resource):
         ev = None
 
         for email in account.emails:
-            if email == data['email']:
+            if email.email == data['email']:
                 if not email.verified:
                     ev = email_logic.generate_verification(email)
                     #TODO: send actual email
                     return {'message': 'Resent verification email'}
-                return {'message': 'Email already exists'}
+                if data['primary']:
+                    email.primary = data['primary']
+                    email.save_to_db()
 
         max_emails = config['email']['max_emails_per_account']
         if len(account.emails) >= max_emails:
@@ -144,10 +146,23 @@ class Email(Resource):
             account = account,
             email = data['email']
         )
+        if data['primary']:
+            account_email.primary = data['primary']
         account_email.save_to_db()
         ev = email_logic.generate_verification(account_email.email)
         #TODO: send actual email
         return {'message': 'Sent verification email'}
+    
+    @jwt_required
+    def delete(self):
+        data = email_parser.parse_args()
+        account = Account.find_by_username(get_jwt_identity())
+        for email in account.emails:
+            if email.email == data['email']:
+                AccountEmail.delete_by_email(email.email)
+                return {'message': 'Sent verification email'}
+
+
 
 class EmailVerify(Resource):
     def get(self):

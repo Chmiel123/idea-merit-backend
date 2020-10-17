@@ -100,6 +100,34 @@ class UserResourceTest(AppBaseTestCase):
         self.assertEqual(result.json['message'], 'Maximum number of emails per account reached')
 
         
+    def test_email_delete(self):
+        register(self.app, 'user', 'pass')
+        access_token = login(self.app, 'user', 'pass').json['access_token']
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.com'),
+            follow_redirects=True
+        )
+        result = self.app.post(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.net'),
+            follow_redirects=True
+        )
+        result = self.app.delete(
+            '/account/email',
+            headers={"Authorization": f"Bearer {access_token}"},
+            data=dict(email = 'user@example.com'),
+            follow_redirects=True
+        )
+        result = self.app.get(
+            '/account/email',
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"},
+            follow_redirects=True,
+        )
+        self.assertEqual(len(result.json['emails']), 1)
+        self.assertEqual(result.json['emails'][0]['email'], 'user@example.net')
 
 
     def test_secret(self):

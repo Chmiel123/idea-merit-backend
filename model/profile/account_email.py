@@ -13,6 +13,7 @@ class AccountEmail(db.Base, PostgresSerializerMixin):
     account_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
     email = Column(TEXT, primary_key=True, nullable=False, unique=True)
     verified = Column(BOOLEAN, nullable=False, default=False)
+    primary = Column(BOOLEAN, nullable=False, default=False)
 
     def save_to_db(self):
         db.session.add(self)
@@ -21,3 +22,7 @@ class AccountEmail(db.Base, PostgresSerializerMixin):
     @staticmethod
     def find_by_email(email):
         return db.session.query(AccountEmail).filter_by(email = email).first()
+
+    @staticmethod
+    def delete_by_email(email):
+        return db.session.query(AccountEmail).filter_by(email = email).delete()
