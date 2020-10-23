@@ -1,7 +1,5 @@
 from sqlalchemy import Column, ForeignKey, BOOLEAN
 from sqlalchemy.dialects.postgresql import UUID, TEXT
-import bcrypt
-from config.config import config
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
 
