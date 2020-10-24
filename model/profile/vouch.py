@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, INT
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from model.postgres_serializer import PostgresSerializerMixin
@@ -10,11 +10,12 @@ class Vouch(db.Base, PostgresSerializerMixin):
     __tablename__ = 'vouch'
     __table_args__ = {'schema': 'profile'}
 
+    id = Column(INT, primary_key=True, unique=True, nullable=False)
     top_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
     bottom_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
 
-    top = relationship('Account', uselist=False, backref = 'vouch_bottoms')
-    bottom = relationship('Account', uselist=False, backref = 'vouch_tops')
+    top = relationship('Account', foreign_keys='Vouch.top_id', uselist=False, backref = 'vouch_bottoms')
+    bottom = relationship('Account', foreign_keys='Vouch.bottom_id', uselist=False, backref = 'vouch_tops')
     
     def __init__(self, top_id: uuid, bottom_id: uuid):
         self.top_id = top_id
@@ -30,12 +31,12 @@ class Vouch(db.Base, PostgresSerializerMixin):
 
     @staticmethod
     def find_by_top_id(top_id):
-        return db.session.query(Vouch).filter_by(top_id = top_id).first()
+        return db.session.query(Vouch).filter_by(top_id = top_id)
 
     @staticmethod
     def find_by_bottom_id(bottom_id):
-        return db.session.query(Vouch).filter_by(bottom_id = bottom_id).first()
+        return db.session.query(Vouch).filter_by(bottom_id = bottom_id)
 
     @staticmethod
     def delete_by_ids(top_id, bottom_id):
-        db.session.query(VouchRequest).filter_by(top_id = top_id, bottom_id = bottom_id).delete()
+        db.session.query(Vouch).filter_by(top_id = top_id, bottom_id = bottom_id).delete()

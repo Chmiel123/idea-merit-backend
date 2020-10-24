@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, ForeignKey, BOOLEAN
+from sqlalchemy import Column, ForeignKey, BOOLEAN, INT
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from model.postgres_serializer import PostgresSerializerMixin
@@ -10,6 +10,7 @@ class VouchRequest(db.Base, PostgresSerializerMixin):
     __tablename__ = 'vouch_request'
     __table_args__ = {'schema': 'profile'}
 
+    id = Column(INT, primary_key=True, unique=True, nullable=False)
     top_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
     bottom_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
     top_accept = Column(BOOLEAN, nullable=False, default=False)
@@ -29,11 +30,11 @@ class VouchRequest(db.Base, PostgresSerializerMixin):
 
     @staticmethod
     def find_by_top_id(top_id):
-        return db.session.query(VouchRequest).filter_by(top_id = top_id).first()
+        return db.session.query(VouchRequest).filter_by(top_id = top_id)
 
     @staticmethod
     def find_by_bottom_id(bottom_id):
-        return db.session.query(VouchRequest).filter_by(bottom_id = bottom_id).first()
+        return db.session.query(VouchRequest).filter_by(bottom_id = bottom_id)
 
     @staticmethod
     def delete_by_ids(top_id, bottom_id):

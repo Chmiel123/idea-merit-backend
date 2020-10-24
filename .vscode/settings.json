@@ -5,7 +5,7 @@
     "python.linting.pylintArgs": [
         "--init-hook",
         "import sys; sys.path.insert(0, '.')",
-        "--good-names=a,b,c,i,j,k,ex,Run,_,pk,x,y,db",
+        "--good-names=a,b,c,i,j,k,ex,Run,_,pk,x,y,db,vr",
         "-d C0303", 
         "-d C0304",
         "-d C0111",

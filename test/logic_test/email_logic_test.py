@@ -6,7 +6,7 @@ from model.profile.account_email import AccountEmail
 from model.profile.email_verification import EmailVerification
 from logic import email_logic
 
-class EmailModelTest(DBBaseTestCase):
+class EmailLogicTest(DBBaseTestCase):
     def test_email_and_email_verification(self):
         account = Account()
         account.name = "john"
