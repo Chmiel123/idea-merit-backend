@@ -31,7 +31,7 @@ python run_sql.py test
 python run_tests.py
 ```
 
-To run unit tests of the pattern *pattern*_test.py
+To run unit tests of the pattern `*pattern*_test.py`
 ```
 python run_tests.py pattern
 ```
