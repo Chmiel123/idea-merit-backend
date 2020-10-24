@@ -30,9 +30,9 @@ def accept_request(accepter: Account, top: Account, bottom: Account):
     if not vr:
         raise IMException('Vouch request not found')
     #set accept
-    if accepter == top.id:
+    if accepter.id == top.id:
         vr.top_accept = True
-    if accepter == bottom.id:
+    if accepter.id == bottom.id:
         vr.bottom_accept = True
     # vr.save_to_db()
     #if both accepted make new vouch
