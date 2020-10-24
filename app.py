@@ -4,11 +4,12 @@ from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
+from config.config import config
 import resources.account_resource
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'development-secret'  # Make this long, random, and secret in a real app!
-# app.config['JWT_SECRET_KEY'] = 'development-secret'  # Change this!
+app.config['SECRET_KEY'] = config['other']['secret_key']
+app.config['JWT_SECRET_KEY'] = config['other']['jwt_secret_key']
 
 jwt = JWTManager(app)
 api = Api(app)

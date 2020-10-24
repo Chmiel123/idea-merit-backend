@@ -1,8 +1,8 @@
 import datetime
+import string
+import random
 from sqlalchemy import Column, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import TEXT
-import bcrypt
-from config.config import config
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
 from model.profile.account_email import AccountEmail
@@ -14,6 +14,10 @@ class EmailVerification(db.Base, PostgresSerializerMixin):
     email = Column(TEXT, ForeignKey('profile.account_email.email', ondelete='CASCADE'), primary_key=True, unique=True, nullable=False)
     verification_key = Column(TEXT, nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, email):
+        self.email = email
+        self.verification_key = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
 
     def save_to_db(self):
         db.session.add(self)

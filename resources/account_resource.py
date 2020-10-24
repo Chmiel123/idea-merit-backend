@@ -124,19 +124,16 @@ class Email(Resource):
     @jwt_required
     def post(self):
         data = email_parser.parse_args()
-
         account = Account.find_by_username(get_jwt_identity())
-        ev = None
 
-        for email in account.emails:
-            if email.email == data['email']:
-                if not email.verified:
-                    ev = email_logic.generate_verification(email)
+        for account_email in account.emails:
+            if account_email.email == data['email']:
+                if not account_email.verified:
+                    email_logic.generate_verification(account_email)
                     #TODO: send actual email
                     return {'message': 'Resent verification email'}
                 if data['primary']:
-                    email.primary = data['primary']
-                    email.save_to_db()
+                    email_logic.set_primary(account_email)
 
         max_emails = config['email']['max_emails_per_account']
         if len(account.emails) >= max_emails:
@@ -149,7 +146,7 @@ class Email(Resource):
         if data['primary']:
             account_email.primary = data['primary']
         account_email.save_to_db()
-        ev = email_logic.generate_verification(account_email.email)
+        email_logic.generate_verification(account_email)
         #TODO: send actual email
         return {'message': 'Sent verification email'}
     

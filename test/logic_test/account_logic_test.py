@@ -3,7 +3,7 @@ import unittest
 from test.db_base_test_case import DBBaseTestCase
 from model.profile.account import Account
 
-class UserLogicTest(DBBaseTestCase):
+class AccountLogicTest(DBBaseTestCase):
     def test_save_to_db_and_find(self):
         account = Account()
         account.name = "john"

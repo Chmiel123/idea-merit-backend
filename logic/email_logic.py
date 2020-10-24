@@ -7,17 +7,25 @@ from model.profile.account_email import AccountEmail
 from config.config import config
 
 
-def generate_verification(email: str) -> EmailVerification:
-    EmailVerification.delete_by_email(email)
+def generate_verification(account_email: AccountEmail) -> EmailVerification:
+    if account_email.verified:
+        raise IMException('Account already verified')
+    EmailVerification.delete_by_email(account_email.email)
     
-    random_string = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
-    ev = EmailVerification(
-        email=email,
-        verification_key = random_string
-    )
+    ev = EmailVerification(account_email.email)
     ev.save_to_db()
     return ev
-        
+
+def set_primary(account_email: AccountEmail) -> None:
+    # get all emails for account and set to non primary
+    for ae in account_email.account.emails:
+        if ae.primary:
+            ae.primary = False
+            ae.save_to_db()
+    # set to primary
+    account_email.primary = True
+    account_email.save_to_db()
+
 def verify(verification_key: str) -> bool:
     found_ev = EmailVerification.find_by_verify_key(verification_key)
     if found_ev:

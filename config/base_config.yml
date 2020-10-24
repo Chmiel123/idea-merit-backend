@@ -1,6 +1,8 @@
 # postgresql+psycopg2://user:password@host/database
 database: postgresql+psycopg2://postgres:abc@localhost/IdeaMerit
 other:
+  secret_key: development-secret
+  jwt_secret_key: development-secret
   bcrypt_rounds: 8
 email:
   max_emails_per_account: 3
