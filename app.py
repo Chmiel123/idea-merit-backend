@@ -17,9 +17,9 @@ api = Api(app)
 if __name__ == "__main__":
     app.run()
 
-@app.route('/')
+@app.route('/ping')
 def index():
-    return jsonify({'message': 'Hello, World!'})
+    return 'pong'
 
 
 api.add_resource(resources.account_resource.AccountRegistration, '/account/register')
