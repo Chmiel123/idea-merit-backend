@@ -2,38 +2,38 @@
 
 ## Miscellanous folders
 
-### doc
+### `doc`
 
 Documentation, manuals, help documents
 
-### tmp
+### `tmp`
 
 Generated files etc.
 
 ## Source folders
 
-### config
+### `config`
 
 Configuration parser and config files in yaml
 
-### model
+### `model`
 
 Data objects, direct access and manipulation of database.
 Each subfolder is a different schema in the database.
 
-### logic
+### `logic`
 
 One step above model. Manipulates models. Does not use the database directly.
 Raises IMExceptions.
 
-### resources
+### `resources`
 
 Flask resources. Uses logic files. Catches exceptions and returns standardized messages.
 
-### test
+### `test`
 
 Unit tests, tests above three layers.
 
-### util
+### `util`
 
 Miscellanous classes and utilities.
