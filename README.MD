@@ -44,3 +44,7 @@ python run_coverage.py
 ## Run production environment
 
 TODO
+
+## Links
+
+[Technical documentation](doc/technical.md)
