@@ -4,7 +4,6 @@ import bcrypt
 from config.config import config
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
-from model.profile import account
 
 class LoginDirect(db.Base, PostgresSerializerMixin):
     __tablename__ = 'login_direct'

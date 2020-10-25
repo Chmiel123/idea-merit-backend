@@ -9,11 +9,11 @@ from logic import vouch_logic
 
 class VouchLogicTest(DBBaseTestCase):
     def test_make_request(self):
-        account1 = Account(name = "john")
+        account1 = Account('john')
         account1.save_to_db()
-        account2 = Account(name = "jane")
+        account2 = Account('jane')
         account2.save_to_db()
-        account3 = Account(name = "joe")
+        account3 = Account('joe')
         account3.save_to_db()
         vouch_logic.make_request(account1, account1, account2)
         vr = VouchRequest.find_by_ids(account1.id, account2.id)
@@ -28,9 +28,9 @@ class VouchLogicTest(DBBaseTestCase):
         self.assertIsNotNone(vr)
 
     def test_accept_request(self):
-        account1 = Account(name = "john")
+        account1 = Account('john')
         account1.save_to_db()
-        account2 = Account(name = "jane")
+        account2 = Account('jane')
         account2.save_to_db()
 
         self.assertRaises(IMException, vouch_logic.accept_request, account2, account1, account2)

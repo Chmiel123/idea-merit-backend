@@ -4,12 +4,14 @@ from model.profile.account import Account
 from model.profile.login_direct import LoginDirect
 from model.profile.account_email import AccountEmail
 from model.profile.email_verification import EmailVerification
-from logic import email_logic
+from logic import email_logic, account_logic
 from config.config import config
+from util import response
+from util.exception import IMException
 
-parser = reqparse.RequestParser()
-parser.add_argument('username', help = 'This field cannot be blank', required = True)
-parser.add_argument('password', help = 'This field cannot be blank', required = True)
+login_parser = reqparse.RequestParser()
+login_parser.add_argument('username', help = 'This field cannot be blank', required = True)
+login_parser.add_argument('password', help = 'This field cannot be blank', required = True)
 
 email_parser = reqparse.RequestParser()
 email_parser.add_argument('email', help = 'This field cannot be blank', required = True)
@@ -20,22 +22,10 @@ email_verification_parser.add_argument('verify', help = 'This field cannot be bl
 
 class AccountRegistration(Resource):
     def post(self):
-        data = parser.parse_args()
-
-        if Account.find_by_username(data['username']):
-            return {'message': f'User {data["username"]} already exists'}
-
-        new_account = Account(
-            name = data['username'],
-        )
-        new_login_direct = LoginDirect(
-            password = LoginDirect.generate_hash(data['password']),
-            account = new_account
-        )
-
+        data = login_parser.parse_args()
         try:
-            new_account.save_to_db()
-            new_login_direct.save_to_db()
+            account_logic.create_account_with_password(data['username'], data['password'])
+
             access_token = create_access_token(identity = data['username'])
             refresh_token = create_refresh_token(identity = data['username'])
             return {
@@ -43,13 +33,13 @@ class AccountRegistration(Resource):
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }
-        except:
-            return {'message': 'Something went wrong'}, 500
+        except IMException as e:
+            return response.error(e.args[0])
 
 
 class AccountLogin(Resource):
     def post(self):
-        data = parser.parse_args()
+        data = login_parser.parse_args()
         current_account = Account.find_by_username(data['username'])
 
         if not current_account:

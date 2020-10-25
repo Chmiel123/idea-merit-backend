@@ -10,6 +10,8 @@ class UserResourceTest(AppBaseTestCase):
         self.register('user', 'pass')
         user = Account.find_by_username('user')
         self.assertEqual(user.name, 'user')
+        result = self.register('user', 'pass')
+        self.assertEqual(result.json['status'], 'Error')
 
     def test_register_login(self):
         self.register('user', 'pass')

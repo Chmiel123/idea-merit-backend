@@ -21,6 +21,9 @@ class Account(db.Base, PostgresSerializerMixin):
     
     UniqueConstraint('name', 'domain')
 
+    def __init__(self, username):
+        self.name = username
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
