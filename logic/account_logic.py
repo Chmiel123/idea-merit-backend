@@ -19,3 +19,14 @@ def create_account_with_password(username: str, password: str):
     new_login_direct.save_to_db()
 
     return new_account, new_login_direct
+
+def login(username: str, password: str) -> Account:
+    current_account = Account.find_by_username(username)
+
+    if not current_account:
+        raise IMException(f'User {username} doesn\'t exist')
+    
+    if LoginDirect.verify_hash(password, current_account.login_direct.password):
+        return current_account
+    else:
+        raise IMException('Wrong credentials')

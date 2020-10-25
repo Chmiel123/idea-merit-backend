@@ -87,6 +87,28 @@ class UserResourceTest(AppBaseTestCase):
         self.assertEqual(len(result.json['emails']), 1)
         self.assertEqual(result.json['emails'][0]['email'], 'user@example.net')
 
+    def test_email_primary(self):
+        self.register_and_login()
+        result = self.post_auth(
+            '/account/email',
+            data=dict(email = 'user@example.com', primary = True)
+        )
+        result = self.post_auth(
+            '/account/email',
+            data=dict(email = 'user@example.net')
+        )
+        result = self.post_auth(
+            '/account/email',
+            data=dict(email = 'user@example.eu', primary = True)
+        )
+        result = self.get_auth(
+            '/account/email'
+        )
+        self.assertEqual(len(result.json['emails']), 3)
+        self.assertFalse(result.json['emails'][0]['primary'])
+        self.assertFalse(result.json['emails'][1]['primary'])
+        self.assertTrue(result.json['emails'][2]['primary'])
+
 
     def test_secret(self):
         self.register_and_login()

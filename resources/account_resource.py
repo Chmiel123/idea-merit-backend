@@ -29,6 +29,7 @@ class AccountRegistration(Resource):
             access_token = create_access_token(identity = data['username'])
             refresh_token = create_refresh_token(identity = data['username'])
             return {
+                'status': 'Ok',
                 'message': f'User {data["username"]} was created',
                 'access_token': access_token,
                 'refresh_token': refresh_token
@@ -40,21 +41,19 @@ class AccountRegistration(Resource):
 class AccountLogin(Resource):
     def post(self):
         data = login_parser.parse_args()
-        current_account = Account.find_by_username(data['username'])
+        try:
+            current_account = account_logic.login(data['username'], data['password'])
 
-        if not current_account:
-            return {'message': 'User {} doesn\'t exist'.format(data['username'])}
-        
-        if LoginDirect.verify_hash(data['password'], current_account.login_direct.password):
             access_token = create_access_token(identity = data['username'])
             refresh_token = create_refresh_token(identity = data['username'])
             return {
-                'message': 'Logged in as {}'.format(current_account.name),
+                'status': 'Ok',
+                'message': f'Logged in as {current_account.name}',
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }
-        else:
-            return {'message': 'Wrong credentials'}
+        except IMException as e:
+            return response.error(e.args[0])
 
 
 # class AccountLogoutAccess(Resource):
@@ -108,7 +107,7 @@ class Email(Resource):
     def get(self):
         account = Account.find_by_username(get_jwt_identity())
         return {
-            'emails': [{'email': x.email, 'verified': x.verified} for x in account.emails]
+            'emails': [{'email': x.email, 'verified': x.verified, 'primary': x.primary} for x in account.emails]
         }
 
     @jwt_required
@@ -133,9 +132,9 @@ class Email(Resource):
             account = account,
             email = data['email']
         )
-        if data['primary']:
-            account_email.primary = data['primary']
         account_email.save_to_db()
+        if data['primary']:
+            email_logic.set_primary(account_email)
         email_logic.generate_verification(account_email)
         #TODO: send actual email
         return {'message': 'Sent verification email'}
@@ -156,9 +155,9 @@ class EmailVerify(Resource):
         data = email_verification_parser.parse_args()
         result = email_logic.verify(data['verify'])
         if result:
-            return {'message': 'Ok'}
+            return response.ok()
         else:
-            return {'message': 'Could not verify email address'}
+            return response.error('Could not verify email address')
 
 # class Users(Resource):
 #     def get(self):
