@@ -17,6 +17,25 @@ class UserResourceTest(AppBaseTestCase):
         self.register('user', 'pass')
         result = self.login('user', 'pass')
         self.assertEqual(result.json['message'], 'Logged in as user')
+        result = self.login('user', 'wrong')
+        self.assertEqual(result.json['status'], 'Error')
+
+    def test_login_refresh(self):
+        self.register('user', 'pass')
+        result = self.login('user', 'pass')
+        self.assertEqual(result.json['message'], 'Logged in as user')
+        result = self.app.get(
+            '/account/refresh',
+            headers={'Authorization': f'Bearer {result.json["refresh_token"]}'},
+        )
+        self.assertIsNotNone(result.json['access_token'])
+
+    def test_current_account(self):
+        self.register_and_login()
+        result = self.get_auth(
+            '/account/current'
+        )
+        self.assertIsNotNone(result.json['id'])
 
     def test_email(self):
         self.register_and_login()
@@ -28,6 +47,11 @@ class UserResourceTest(AppBaseTestCase):
             '/account/email',
             data=dict(email = 'user@example.net')
         )
+        result = self.post_auth(
+            '/account/email',
+            data=dict(email = 'user@example.net')
+        )
+        self.assertEqual(result.json['message'], 'Resent verification email')
         result = self.get_auth(
             '/account/email'
         )
@@ -37,7 +61,7 @@ class UserResourceTest(AppBaseTestCase):
         result = self.get_auth(
             '/account/email/verify?verify=abc'
         )
-        self.assertEqual(result.json['message'], 'Could not verify email address')
+        self.assertEqual(result.json['message'], 'Email could not be verified')
         result = self.get_auth(
             f'/account/email/verify?verify={ev.verification_key}'
         )
@@ -64,7 +88,7 @@ class UserResourceTest(AppBaseTestCase):
             '/account/email',
             data=dict(email = 'user@info.com')
         )
-        self.assertEqual(result.json['message'], 'Maximum number of emails per account reached')
+        self.assertEqual(result.json['message'], 'Maximum number of emails (3) per account reached')
 
         
     def test_email_delete(self):
@@ -87,6 +111,18 @@ class UserResourceTest(AppBaseTestCase):
         self.assertEqual(len(result.json['emails']), 1)
         self.assertEqual(result.json['emails'][0]['email'], 'user@example.net')
 
+        result = self.delete_auth(
+            '/account/email',
+            data=dict(email = 'user@nonexistent.com')
+        )
+        self.assertEqual(result.json['message'], 'Email not found')
+        self.register_and_login()
+        result = self.delete_auth(
+            '/account/email',
+            data=dict(email = 'user@example.com')
+        )
+        self.assertEqual(result.json['message'], 'Email not found')
+
     def test_email_primary(self):
         self.register_and_login()
         result = self.post_auth(
@@ -100,6 +136,10 @@ class UserResourceTest(AppBaseTestCase):
         result = self.post_auth(
             '/account/email',
             data=dict(email = 'user@example.eu', primary = True)
+        )
+        result = self.post_auth(
+            '/account/email',
+            data=dict(email = 'user@example.net', primary = True)
         )
         result = self.get_auth(
             '/account/email'

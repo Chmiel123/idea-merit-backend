@@ -6,7 +6,6 @@ from model.profile.email_verification import EmailVerification
 from model.profile.account_email import AccountEmail
 from config.config import config
 
-
 def generate_verification(account_email: AccountEmail) -> EmailVerification:
     if account_email.verified:
         raise IMException('Account already verified')
@@ -31,10 +30,16 @@ def verify(verification_key: str) -> bool:
     if found_ev:
         found_account_email = AccountEmail.find_by_email(found_ev.email)
         max_hours = config['email']['email_verification_hours']
-        if found_ev.verification_key == verification_key and found_ev.created_date + datetime.timedelta(hours=max_hours) > datetime.datetime.utcnow():
-            found_account_email.verified = True
-            EmailVerification.delete_by_email(found_ev.email)
-            return True
+        if found_ev.verification_key == verification_key:
+            if found_ev.created_date + datetime.timedelta(hours=max_hours) > datetime.datetime.utcnow():
+                found_account_email.verified = True
+                EmailVerification.delete_by_email(found_ev.email)
+                return True
+            else:
+                raise IMException('Verification expired')
         else:
-            return False
+            raise IMException('Invalid verification key')
+    else:
+        raise IMException('Email could not be verified')
     return False
+

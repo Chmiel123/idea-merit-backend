@@ -25,7 +25,7 @@ def index():
 api.add_resource(resources.account_resource.AccountRegistration, '/account/register')
 api.add_resource(resources.account_resource.AccountLogin, '/account/login')
 api.add_resource(resources.account_resource.TokenRefresh, '/account/refresh')
-api.add_resource(resources.account_resource.CurrentAccount, '/account/user')
+api.add_resource(resources.account_resource.CurrentAccount, '/account/current')
 api.add_resource(resources.account_resource.Email, '/account/email')
 api.add_resource(resources.account_resource.EmailVerify, '/account/email/verify')
 api.add_resource(resources.account_resource.SecretResource, '/secret')

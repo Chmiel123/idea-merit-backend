@@ -82,7 +82,7 @@ class AccountLogin(Resource):
 
 class TokenRefresh(Resource):
     @jwt_refresh_token_required
-    def post(self):
+    def get(self):
         current_user = get_jwt_identity()
         access_token = create_access_token(identity = current_user)
         return {'access_token': access_token}
@@ -113,31 +113,37 @@ class Email(Resource):
     @jwt_required
     def post(self):
         data = email_parser.parse_args()
-        account = Account.find_by_username(get_jwt_identity())
+        try:
+            # update
+            account = Account.find_by_username(get_jwt_identity())
+            for account_email in account.emails:
+                if account_email.email == data['email']:
+                    if data['primary']:
+                        email_logic.set_primary(account_email)
+                    if not account_email.verified:
+                        email_logic.generate_verification(account_email)
+                        #TODO: send actual email
+                        return response.ok('Resent verification email')
+                    return response.ok()
 
-        for account_email in account.emails:
-            if account_email.email == data['email']:
-                if not account_email.verified:
-                    email_logic.generate_verification(account_email)
-                    #TODO: send actual email
-                    return {'message': 'Resent verification email'}
-                if data['primary']:
-                    email_logic.set_primary(account_email)
+            # create
+            max_emails = config['email']['max_emails_per_account']
+            if len(account.emails) >= max_emails:
+                return response.error(f'Maximum number of emails ({max_emails}) per account reached')
+            
+            new_account_email = AccountEmail(
+                account = account,
+                email = data['email']
+            )
+            new_account_email.save_to_db()
+            if data['primary']:
+                email_logic.set_primary(new_account_email)
+            email_logic.generate_verification(new_account_email)
+            #TODO: send actual email
+            return response.ok('Sent verification email')
 
-        max_emails = config['email']['max_emails_per_account']
-        if len(account.emails) >= max_emails:
-            return {'message': 'Maximum number of emails per account reached', 'value': max_emails}
-        
-        account_email = AccountEmail(
-            account = account,
-            email = data['email']
-        )
-        account_email.save_to_db()
-        if data['primary']:
-            email_logic.set_primary(account_email)
-        email_logic.generate_verification(account_email)
-        #TODO: send actual email
-        return {'message': 'Sent verification email'}
+        except IMException as e:
+            return response.error(e.args[0])
     
     @jwt_required
     def delete(self):
@@ -146,18 +152,17 @@ class Email(Resource):
         for email in account.emails:
             if email.email == data['email']:
                 AccountEmail.delete_by_email(email.email)
-                return {'message': 'Sent verification email'}
-
-
+                return response.ok('Email deleted')
+        return response.error('Email not found')
 
 class EmailVerify(Resource):
     def get(self):
         data = email_verification_parser.parse_args()
-        result = email_logic.verify(data['verify'])
-        if result:
+        try:
+            email_logic.verify(data['verify'])
             return response.ok()
-        else:
-            return response.error('Could not verify email address')
+        except IMException as e:
+            return response.error(e.args[0])
 
 # class Users(Resource):
 #     def get(self):
