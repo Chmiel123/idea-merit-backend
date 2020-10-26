@@ -15,6 +15,8 @@ class AppBaseTestCase(unittest.TestCase):
         db.Base.metadata.create_all(db.engine)
         db.session.commit()
 
+        self.user = []
+
     def tearDown(self):
         pass
 
@@ -49,7 +51,18 @@ class AppBaseTestCase(unittest.TestCase):
 
     def register_and_login(self, username='user', password='pass'):
         self.register(username, password)
-        self.access_token = self.login(username, password).json['access_token']
+        login = self.login(username, password)
+        self.access_token = login.json['access_token']
+        info = self.get_auth('/account/current')
+        user = {
+            'id': info.json['id'],
+            'name': username,
+            'access_token': login.json['access_token'],
+            'refresh_token': login.json['refresh_token'],
+            'info': info.json
+        }
+        self.user.append(user)
+        return user
 
     def register(self, username, password):
         return self.app.post(

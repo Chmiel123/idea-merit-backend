@@ -98,8 +98,7 @@ class CurrentAccount(Resource):
             'created_date': str(account.created_date),
             'login': {
                 'password': account.login_direct.password
-            },
-            'emails': dict(account.emails)
+            }
         }
 
 class Email(Resource):

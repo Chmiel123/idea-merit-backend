@@ -29,6 +29,10 @@ class Account(db.Base, PostgresSerializerMixin):
         db.session.commit()
     
     @staticmethod
+    def find_by_id(id):
+        return db.session.query(Account).filter_by(id = id).first()
+
+    @staticmethod
     def find_by_username(username, domain=None):
         return db.session.query(Account).filter_by(name = username, domain=domain).first()
     
