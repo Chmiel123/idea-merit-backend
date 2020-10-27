@@ -7,3 +7,5 @@ other:
 email:
   max_emails_per_account: 3
   email_verification_hours: 48
+vouch:
+  resource_speed_per_vouch: "4: 0.2, 5: 0.4, 6: 0.6, 7: 0.8, 8: 1"

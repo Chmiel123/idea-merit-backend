@@ -31,3 +31,16 @@ class VouchRequest(Resource):
         except IMException as e:
             return response.error(e.args[0])
 
+    @jwt_required
+    def delete(self):
+        try:
+            data = request_parser.parse_args()
+            account = Account.find_by_username(get_jwt_identity())
+            top = Account.find_by_id(data['top_id'])
+            bottom = Account.find_by_id(data['bottom_id'])
+            result = vouch_logic.remove_vouch_request(account, top, bottom)
+            return response.ok(result)
+        except IMException as e:
+            return response.error(e.args[0])
+
+# class Vouch(Resource):

@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, ForeignKey, BOOLEAN, INT
+from sqlalchemy import Column, UniqueConstraint, ForeignKey, BOOLEAN, INT
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from model.postgres_serializer import PostgresSerializerMixin
@@ -15,6 +15,8 @@ class VouchRequest(db.Base, PostgresSerializerMixin):
     bottom_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
     top_accept = Column(BOOLEAN, nullable=False, default=False)
     bottom_accept = Column(BOOLEAN, nullable=False, default=False)
+
+    UniqueConstraint('top_id', 'bottom_id')
 
     def __init__(self, top_id: uuid, bottom_id: uuid):
         self.top_id = top_id

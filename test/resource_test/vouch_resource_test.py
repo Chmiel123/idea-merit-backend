@@ -23,5 +23,5 @@ class VouchResourceTest(AppBaseTestCase):
             '/vouch/vouch_request'
         )
         self.assertEqual(len(result.json), 1)
+        self.assertEqual(result.json[0]['top_accept'], False)
         self.assertEqual(result.json[0]['bottom_accept'], True)
-        self.assertEqual(result.json[0]['top_accept'], True)

@@ -39,7 +39,7 @@ class VouchLogicTest(DBBaseTestCase):
         self.assertRaises(IMException, vouch_logic.make_request, account1, account1, account2)
 
         vouch_logic.make_request(account1, account2, account1)
-        vouch_logic.make_request(account1, account2, account1)
+        self.assertRaises(IMException, vouch_logic.make_request, account1, account2, account1)
         vouch = Vouch.find_by_ids(account2.id, account1.id)
         self.assertIsNone(vouch)
 
@@ -47,6 +47,19 @@ class VouchLogicTest(DBBaseTestCase):
         vouch = Vouch.find_by_ids(account2.id, account1.id)
         self.assertIsNotNone(vouch)
 
+    # "4: 0.2, 5: 0.4, 6: 0.6, 7: 0.8, 8: 1"
+    def test_speed_per_vouch_nbr(self):
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(0), 0)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(1), 0)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(2), 0)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(3), 0)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(4), 0.2)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(5), 0.4)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(6), 0.6)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(7), 0.8)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(8), 1)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(9), 1)
+        self.assertEqual(vouch_logic.speed_per_vouch_nbr(10), 1)
 
 if __name__ == '__main__':
     unittest.main()

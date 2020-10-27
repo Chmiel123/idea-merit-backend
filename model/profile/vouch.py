@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, ForeignKey, INT
+from sqlalchemy import Column, UniqueConstraint, ForeignKey, INT
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from model.postgres_serializer import PostgresSerializerMixin
@@ -17,6 +17,8 @@ class Vouch(db.Base, PostgresSerializerMixin):
     top = relationship('Account', foreign_keys='Vouch.top_id', uselist=False, backref = 'vouch_bottoms')
     bottom = relationship('Account', foreign_keys='Vouch.bottom_id', uselist=False, backref = 'vouch_tops')
     
+    UniqueConstraint('top_id', 'bottom_id')
+
     def __init__(self, top_id: uuid, bottom_id: uuid):
         self.top_id = top_id
         self.bottom_id = bottom_id
