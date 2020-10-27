@@ -17,8 +17,6 @@ class VouchRequest(Resource):
         vouch_requests = vouch_logic.get_requests(account)
         return [x.to_dict() for x in vouch_requests]
 
-        #return jsonify(vouch_requests)
-
     @jwt_required
     def post(self):
         try:
@@ -43,4 +41,21 @@ class VouchRequest(Resource):
         except IMException as e:
             return response.error(e.args[0])
 
-# class Vouch(Resource):
+class Vouch(Resource):
+    @jwt_required
+    def get(self):
+        account = Account.find_by_username(get_jwt_identity())
+        vouches = vouch_logic.get_vouches(account)
+        return [x.to_dict() for x in vouches]
+
+    @jwt_required
+    def delete(self):
+        try:
+            data = request_parser.parse_args()
+            account = Account.find_by_username(get_jwt_identity())
+            top = Account.find_by_id(data['top_id'])
+            bottom = Account.find_by_id(data['bottom_id'])
+            result = vouch_logic.remove_vouch(account, top, bottom)
+            return response.ok(result)
+        except IMException as e:
+            return response.error(e.args[0])

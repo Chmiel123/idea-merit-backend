@@ -14,9 +14,6 @@ class Vouch(db.Base, PostgresSerializerMixin):
     top_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
     bottom_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
 
-    top = relationship('Account', foreign_keys='Vouch.top_id', uselist=False, backref = 'vouch_bottoms')
-    bottom = relationship('Account', foreign_keys='Vouch.bottom_id', uselist=False, backref = 'vouch_tops')
-    
     UniqueConstraint('top_id', 'bottom_id')
 
     def __init__(self, top_id: uuid, bottom_id: uuid):

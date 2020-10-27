@@ -77,6 +77,12 @@ def remove_vouch(requester: Account, top: Account, bottom: Account):
     update_vouching_resource(bottom)
     return 'Deleted vouch'
 
+def get_vouches(account: Account) -> List[Vouch]:
+    result = []
+    result += Vouch.find_by_top_id(account.id)
+    result += Vouch.find_by_bottom_id(account.id)
+    return result
+
 def update_vouching_resource(account: Account):
     vouches = VouchRequest.find_by_bottom_id(account.id)
     new_speed = speed_per_vouch_nbr(len(vouches))
