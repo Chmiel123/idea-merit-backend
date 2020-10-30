@@ -1,6 +1,7 @@
 import uuid
 import datetime
-from sqlalchemy import Column, UniqueConstraint, DateTime
+from util.exception import ModelException
+from sqlalchemy import Column, UniqueConstraint, DateTime, FLOAT
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 from model.postgres_serializer import PostgresSerializerMixin
@@ -16,6 +17,10 @@ class Account(db.Base, PostgresSerializerMixin):
     domain = Column(TEXT, nullable=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
+    virtual_resource_start_date = Column(DateTime, default=datetime.datetime.utcnow)
+    virtual_resource_speed = Column(FLOAT, default=0.0)
+    virtual_resource_accrued = Column(FLOAT, default=0.0)
+
     login_direct = relationship('LoginDirect', uselist=False, backref = 'account')
     emails = relationship('AccountEmail', backref = 'account')
     
@@ -27,7 +32,27 @@ class Account(db.Base, PostgresSerializerMixin):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
-    
+
+    def update_total_resource(self) -> float:
+        new_date = datetime.datetime.utcnow()
+        hours_accrued = (self.virtual_resource_start_date - new_date).total_seconds() / 60 / 60 * self.virtual_resource_speed
+        self.virtual_resource_accrued += hours_accrued
+        self.virtual_resource_start_date = new_date
+        self.save_to_db()
+        return self.virtual_resource_accrued
+
+    def set_resource_speed(self, new_speed: float):
+        self.update_total_resource()
+        self.virtual_resource_speed = new_speed
+        self.save_to_db()
+
+    def subtract_resource(self, amount: float) -> float:
+        if amount > self.update_total_resource():
+            return 0
+        self.virtual_resource_accrued -= amount
+        self.save_to_db()
+        return amount
+
     @staticmethod
     def find_by_id(id):
         return db.session.query(Account).filter_by(id = id).first()

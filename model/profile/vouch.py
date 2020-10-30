@@ -30,11 +30,11 @@ class Vouch(db.Base, PostgresSerializerMixin):
 
     @staticmethod
     def find_by_top_id(top_id):
-        return db.session.query(Vouch).filter_by(top_id = top_id)
+        return db.session.query(Vouch).filter_by(top_id = top_id).all()
 
     @staticmethod
     def find_by_bottom_id(bottom_id):
-        return db.session.query(Vouch).filter_by(bottom_id = bottom_id)
+        return db.session.query(Vouch).filter_by(bottom_id = bottom_id).all()
 
     @staticmethod
     def delete_by_ids(top_id, bottom_id):

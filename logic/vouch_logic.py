@@ -84,11 +84,12 @@ def get_vouches(account: Account) -> List[Vouch]:
     return result
 
 def update_vouching_resource(account: Account):
-    vouches = VouchRequest.find_by_bottom_id(account.id)
+    vouches = Vouch.find_by_bottom_id(account.id)
     new_speed = speed_per_vouch_nbr(len(vouches))
-    pass
+    account.set_resource_speed(new_speed)
 
 resource_speed_per_vouch_cache = {}
+
 def speed_per_vouch_nbr(vouch_nbr: int):
     global resource_speed_per_vouch_cache
     if not resource_speed_per_vouch_cache:
