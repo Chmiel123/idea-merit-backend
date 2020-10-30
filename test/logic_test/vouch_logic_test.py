@@ -1,5 +1,5 @@
 import unittest
-
+import datetime
 from test.db_base_test_case import DBBaseTestCase
 from config.config import config
 from util.exception import IMException
@@ -76,6 +76,15 @@ class VouchLogicTest(DBBaseTestCase):
         vouch_logic.make_request(a3, a3, a1)
         self.assertEqual(a1.virtual_resource_speed, 1)
         
+    def test_spend_resource(self):
+        a1 = Account('john')
+        a1.virtual_resource_start_date = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        a1.virtual_resource_speed = 1
+        a1.virtual_resource_accrued = 24
+        a1.save_to_db()
+        self.assertAlmostEqual(a1.get_total_resource(), 48, 3)
+        a1.subtract_resource(40)
+        self.assertAlmostEqual(a1.get_total_resource(), 8, 3)
 
 
 if __name__ == '__main__':

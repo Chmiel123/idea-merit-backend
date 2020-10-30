@@ -35,11 +35,14 @@ class Account(db.Base, PostgresSerializerMixin):
 
     def update_total_resource(self) -> float:
         new_date = datetime.datetime.utcnow()
-        hours_accrued = (self.virtual_resource_start_date - new_date).total_seconds() / 60 / 60 * self.virtual_resource_speed
+        hours_accrued = (new_date - self.virtual_resource_start_date).total_seconds() / 60 / 60 * self.virtual_resource_speed
         self.virtual_resource_accrued += hours_accrued
         self.virtual_resource_start_date = new_date
         self.save_to_db()
         return self.virtual_resource_accrued
+
+    def get_total_resource(self) -> float:
+        return self.update_total_resource()
 
     def set_resource_speed(self, new_speed: float):
         self.update_total_resource()
