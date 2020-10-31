@@ -26,6 +26,8 @@ def index():
 api.add_resource(resources.account_resource.AccountRegistration, '/account/register')
 api.add_resource(resources.account_resource.AccountLogin, '/account/login')
 api.add_resource(resources.account_resource.TokenRefresh, '/account/refresh')
+api.add_resource(resources.account_resource.PasswordResetGen, '/account/password_reset_gen')
+api.add_resource(resources.account_resource.PasswordResetVerify, '/account/password_reset_verify')
 api.add_resource(resources.account_resource.CurrentAccount, '/account/current')
 api.add_resource(resources.account_resource.Email, '/account/email')
 api.add_resource(resources.account_resource.EmailVerify, '/account/email/verify')

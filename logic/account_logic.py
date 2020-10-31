@@ -34,9 +34,13 @@ def login(username: str, password: str) -> Account:
     else:
         raise IMException('Wrong credentials')
 
-def generate_password_reset(account: Account, account_email: AccountEmail):
-    PasswordReset.delete_by_account_id(account.id)
-    pr = PasswordReset(account.id)
+def generate_password_reset(email: str):
+    found_email_account = AccountEmail.find_by_email(email)
+    if not found_email_account:
+        raise IMException('Email not found')
+    
+    PasswordReset.delete_by_account_id(found_email_account.account_id)
+    pr = PasswordReset(found_email_account.account_id)
     pr.save_to_db()
     #TODO: send email with verification key
 

@@ -90,18 +90,7 @@ class AppBaseTestCase(unittest.TestCase):
 
     def register_and_login(self, username='user', password='pass'):
         self.register(username, password)
-        login = self.login(username, password)
-        self.access_token = login.json['access_token']
-        info = self.get_auth('/account/current')
-        user = UserStub(
-            info.json['id'],
-            username,
-            login.json['access_token'],
-            login.json['refresh_token'],
-            info.json,
-            self.app
-        )
-        self.users.append(user)
+        user = self.login(username, password)
         return user
 
     def register(self, username, password):
@@ -112,8 +101,23 @@ class AppBaseTestCase(unittest.TestCase):
         )
 
     def login(self, username, password):
-        return self.app.post(
+        result = self.app.post(
             '/account/login',
             data=dict(username = username, password = password),
             follow_redirects=True
         )
+        if result.json['status'] == 'Error':
+            return None
+        self.access_token = result.json['access_token']
+        info = self.get_auth('/account/current')
+        user = UserStub(
+            info.json['id'],
+            username,
+            result.json['access_token'],
+            result.json['refresh_token'],
+            info.json,
+            self.app
+        )
+        self.users.append(user)
+        return user
+
