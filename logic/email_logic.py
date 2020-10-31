@@ -29,16 +29,13 @@ def verify(verification_key: str) -> bool:
     found_ev = EmailVerification.find_by_verify_key(verification_key)
     if found_ev:
         found_account_email = AccountEmail.find_by_email(found_ev.email)
-        max_hours = config['email']['email_verification_hours']
-        if found_ev.verification_key == verification_key:
-            if found_ev.created_date + datetime.timedelta(hours=max_hours) > datetime.datetime.utcnow():
-                found_account_email.verified = True
-                EmailVerification.delete_by_email(found_ev.email)
-                return True
-            else:
-                raise IMException('Verification expired')
+        max_hours = config['limit']['email_verification_hours']
+        if found_ev.created_date + datetime.timedelta(hours=max_hours) > datetime.datetime.utcnow():
+            found_account_email.verified = True
+            EmailVerification.delete_by_email(found_ev.email)
+            return True
         else:
-            raise IMException('Invalid verification key')
+            raise IMException('Verification expired')
     else:
         raise IMException('Email could not be verified')
     return False

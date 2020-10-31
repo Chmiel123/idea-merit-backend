@@ -85,7 +85,13 @@ class VouchLogicTest(DBBaseTestCase):
         self.assertAlmostEqual(a1.get_total_resource(), 48, 3)
         a1.subtract_resource(40)
         self.assertAlmostEqual(a1.get_total_resource(), 8, 3)
-
+        a1.virtual_resource_start_date = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        a1.virtual_resource_speed = 0.5
+        a1.virtual_resource_accrued = 24
+        a1.save_to_db()
+        self.assertAlmostEqual(a1.get_total_resource(), 36, 3)
+        a1.subtract_resource(40)
+        self.assertAlmostEqual(a1.get_total_resource(), 36, 3)
 
 if __name__ == '__main__':
     unittest.main()

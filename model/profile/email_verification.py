@@ -25,8 +25,7 @@ class EmailVerification(db.Base, PostgresSerializerMixin):
     
     @staticmethod
     def find_by_verify_key(verification_key: str):
-        found = db.session.query(EmailVerification).filter_by(verification_key = verification_key).first()
-        return found
+        return db.session.query(EmailVerification).filter_by(verification_key = verification_key).first()
 
     @staticmethod
     def find_by_email(email):

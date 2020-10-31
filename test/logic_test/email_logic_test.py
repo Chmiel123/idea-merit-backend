@@ -1,6 +1,7 @@
 import unittest
-
+import datetime
 from test.db_base_test_case import DBBaseTestCase
+from util.exception import IMException
 from model.profile.account import Account
 from model.profile.account_email import AccountEmail
 from model.profile.email_verification import EmailVerification
@@ -18,11 +19,11 @@ class EmailLogicTest(DBBaseTestCase):
         ev = email_logic.generate_verification(account_email)
         found_account = Account.find_by_username('john')
         found_ev = EmailVerification.find_by_email(found_account.emails[0].email)
-        verified = email_logic.verify(found_ev.verification_key)
+        email_logic.verify(found_ev.verification_key)
 
         self.assertEqual(found_account.emails[0], account_email)
+        self.assertEqual(found_account.emails[0].verified, True)
         self.assertEqual(found_ev, ev)
-        self.assertEqual(verified, True)
         
     def test_multiple_email_verification(self):
         account = Account('john')
@@ -42,14 +43,28 @@ class EmailLogicTest(DBBaseTestCase):
         nbr_found_ev = len(self.db.session.query(EmailVerification).filter_by(email = account_email.email).all())
         self.assertEqual(nbr_found_ev, 1)
 
-        verified = email_logic.verify(found_ev.verification_key)
+        email_logic.verify(found_ev.verification_key)
 
         nbr_found_ev = len(self.db.session.query(EmailVerification).filter_by(email = account_email.email).all())
         self.assertEqual(nbr_found_ev, 0)
 
         self.assertEqual(found_account.emails[0], account_email)
+        self.assertEqual(found_account.emails[0].verified, True)
         self.assertEqual(found_ev, ev)
-        self.assertEqual(verified, True)
+
+    def test_email_verification_expired(self):
+        account = Account('john')
+        account.save_to_db()
+        account_email = AccountEmail(
+            account = account,
+            email = 'john@smith.com'
+        )
+        account_email.save_to_db()
+        ev = email_logic.generate_verification(account_email)
+        found_account = Account.find_by_username('john')
+        found_ev = EmailVerification.find_by_email(found_account.emails[0].email)
+        found_ev.created_date = datetime.datetime.utcnow() - datetime.timedelta(hours=49)
+        self.assertRaises(IMException, email_logic.verify, found_ev.verification_key)
 
     def test_email_primary(self):
         account = Account('john')

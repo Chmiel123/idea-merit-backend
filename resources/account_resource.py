@@ -126,7 +126,7 @@ class Email(Resource):
                     return response.ok()
 
             # create
-            max_emails = config['email']['max_emails_per_account']
+            max_emails = config['limit']['max_emails_per_account']
             if len(account.emails) >= max_emails:
                 return response.error(f'Maximum number of emails ({max_emails}) per account reached')
             
