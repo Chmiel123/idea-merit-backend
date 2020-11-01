@@ -7,6 +7,7 @@ from flask_restful import Api
 from config.config import config
 import resources.account_resource
 import resources.vouch_resource
+import resources.idea_resource
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config['other']['secret_key']
@@ -34,3 +35,4 @@ api.add_resource(resources.account_resource.EmailVerify, '/account/email/verify'
 api.add_resource(resources.account_resource.SecretResource, '/secret')
 api.add_resource(resources.vouch_resource.VouchRequest, '/vouch/vouch_request')
 api.add_resource(resources.vouch_resource.Vouch, '/vouch/vouch')
+api.add_resource(resources.idea_resource.Idea, '/idea')

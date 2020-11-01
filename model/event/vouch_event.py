@@ -1,8 +1,7 @@
 import uuid
 import enum
 import datetime
-from sqlalchemy import Column, ForeignKey, BOOLEAN, INT, SMALLINT, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, INT, DateTime
 from sqlalchemy.dialects.postgresql import UUID, ENUM
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db

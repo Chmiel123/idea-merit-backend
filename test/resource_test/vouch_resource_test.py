@@ -7,7 +7,6 @@ from model.profile.email_verification import EmailVerification
 
 class VouchResourceTest(AppBaseTestCase):
     def test_make_vouch_request(self):
-        #TODO: keep track of multiple logins
         u1 = self.register_and_login()
         u2 = self.register_and_login('user2')
 
@@ -55,7 +54,6 @@ class VouchResourceTest(AppBaseTestCase):
         self.assertEqual(result.json[0]['bottom_id'], u2.id)
 
     def test_make_vouch_request_and_delete(self):
-        #TODO: keep track of multiple logins
         u1 = self.register_and_login('user1')
         u2 = self.register_and_login('user2')
 
@@ -85,7 +83,6 @@ class VouchResourceTest(AppBaseTestCase):
         self.assertEqual(len(result.json), 0)
     
     def test_make_vouch_request_and_accept_and_delete(self):
-        #TODO: keep track of multiple logins
         u1 = self.register_and_login('user1')
         u2 = self.register_and_login('user2')
 

@@ -102,10 +102,7 @@ class CurrentAccount(Resource):
             'id': str(account.id),
             'name': account.name,
             'domain': account.domain,
-            'created_date': str(account.created_date),
-            'login': {
-                'password': account.account_password.password
-            }
+            'created_date': str(account.created_date)
         }
 
 class PasswordResetGen(Resource):

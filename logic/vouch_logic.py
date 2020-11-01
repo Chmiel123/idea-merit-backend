@@ -4,7 +4,7 @@ from util.exception import IMException
 from model.profile.account import Account
 from model.profile.vouch import Vouch
 from model.profile.vouch_request import VouchRequest
-from model.event.vouch_request import VouchEvent, VouchEventType
+from model.event.vouch_event import VouchEvent, VouchEventType
 
 def get_requests(account: Account) -> List[VouchRequest]:
     result = []
