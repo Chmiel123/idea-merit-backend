@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
-from model.profile import login_direct, account_email
+from model.profile import account_password, account_email
 
 class Account(db.Base, PostgresSerializerMixin):
     __tablename__ = 'account'
@@ -21,7 +21,7 @@ class Account(db.Base, PostgresSerializerMixin):
     virtual_resource_speed = Column(FLOAT, default=0.0)
     virtual_resource_accrued = Column(FLOAT, default=0.0)
 
-    login_direct = relationship('LoginDirect', uselist=False, backref = 'account')
+    account_password = relationship('AccountPassword', uselist=False, backref = 'account')
     emails = relationship('AccountEmail', backref = 'account')
     
     UniqueConstraint('name', 'domain')

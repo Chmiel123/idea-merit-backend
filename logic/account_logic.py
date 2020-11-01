@@ -1,7 +1,7 @@
 import datetime
 from util.exception import IMException
 from model.profile.account import Account
-from model.profile.login_direct import LoginDirect
+from model.profile.account_password import AccountPassword
 from model.profile.account_email import AccountEmail
 from model.profile.password_reset import PasswordReset
 from config.config import config
@@ -18,10 +18,10 @@ def create_account_with_password(username: str, password: str):
 
     new_account = Account(username)
     new_account.save_to_db()
-    new_login_direct = LoginDirect(new_account.id, password)
-    new_login_direct.save_to_db()
+    new_account_password = AccountPassword(new_account.id, password)
+    new_account_password.save_to_db()
 
-    return new_account, new_login_direct
+    return new_account, new_account_password
 
 def login(username: str, password: str) -> Account:
     current_account = Account.find_by_username(username)
@@ -29,7 +29,7 @@ def login(username: str, password: str) -> Account:
     if not current_account:
         raise IMException(f'User {username} doesn\'t exist')
     
-    if LoginDirect.verify_hash(password, current_account.login_direct.password):
+    if AccountPassword.verify_hash(password, current_account.account_password.password):
         return current_account
     else:
         raise IMException('Wrong credentials')
@@ -51,9 +51,9 @@ def verify_password_reset(verification_key: str, new_password: str):
     max_hours = config['limit']['password_reset_hours']
     if found_pr.created_date + datetime.timedelta(hours=max_hours) > datetime.datetime.utcnow():
         #create
-        LoginDirect.delete_by_account_id(found_pr.account_id)
-        new_login_direct = LoginDirect(found_pr.account_id, new_password)
-        new_login_direct.save_to_db()
+        AccountPassword.delete_by_account_id(found_pr.account_id)
+        new_account_password = AccountPassword(found_pr.account_id, new_password)
+        new_account_password.save_to_db()
         return 'Password reset succesfully'
     else:
         raise IMException('Password reset expired')

@@ -16,10 +16,10 @@ class AccountLogicTest(DBBaseTestCase):
     def test_password_reset(self):
         account_logic.create_account_with_password('john', 'pass')
         found_account = Account.find_by_username('john')
-        self.assertIsNotNone(found_account.login_direct)
+        self.assertIsNotNone(found_account.account_password)
         self.assertEqual(found_account.name, 'john')
         account = account_logic.login('john', 'pass')
-        self.assertIsNotNone(found_account.login_direct)
+        self.assertIsNotNone(found_account.account_password)
         self.assertEqual(account, found_account)
         account_email = AccountEmail(
             account = account,
@@ -32,7 +32,7 @@ class AccountLogicTest(DBBaseTestCase):
         account_logic.verify_password_reset(pr.verification_key, 'pass2')
 
         account = account_logic.login('john', 'pass2')
-        self.assertIsNotNone(found_account.login_direct)
+        self.assertIsNotNone(found_account.account_password)
         self.assertEqual(account, found_account)
 
 

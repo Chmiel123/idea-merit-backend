@@ -6,8 +6,8 @@ from config.config import config
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
 
-class LoginDirect(db.Base, PostgresSerializerMixin):
-    __tablename__ = 'login_direct'
+class AccountPassword(db.Base, PostgresSerializerMixin):
+    __tablename__ = 'account_password'
     __table_args__ = {'schema': 'profile'}
 
     account_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), primary_key=True, unique=True, nullable=False)
@@ -15,7 +15,7 @@ class LoginDirect(db.Base, PostgresSerializerMixin):
 
     def __init__(self, account_id: uuid, password: str):
         self.account_id = account_id
-        self.password = LoginDirect.generate_hash(password)
+        self.password = AccountPassword.generate_hash(password)
         
     def save_to_db(self):
         db.session.add(self)
@@ -33,4 +33,4 @@ class LoginDirect(db.Base, PostgresSerializerMixin):
 
     @staticmethod
     def delete_by_account_id(account_id):
-        return db.session.query(LoginDirect).filter_by(account_id = account_id).delete()
+        return db.session.query(AccountPassword).filter_by(account_id = account_id).delete()

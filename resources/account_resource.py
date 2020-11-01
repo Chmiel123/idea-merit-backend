@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity
 from model.profile.account import Account
-from model.profile.login_direct import LoginDirect
+from model.profile.account_password import AccountPassword
 from model.profile.account_email import AccountEmail
 from model.profile.email_verification import EmailVerification
 from logic import email_logic, account_logic
@@ -104,7 +104,7 @@ class CurrentAccount(Resource):
             'domain': account.domain,
             'created_date': str(account.created_date),
             'login': {
-                'password': account.login_direct.password
+                'password': account.account_password.password
             }
         }
 
