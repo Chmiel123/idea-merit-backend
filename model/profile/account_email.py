@@ -8,7 +8,7 @@ class AccountEmail(db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'profile'}
 
     account_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
-    email = Column(TEXT, primary_key=True, nullable=False, unique=True)
+    email = Column(TEXT, primary_key=True, nullable=False, unique=True, index=True)
     verified = Column(BOOLEAN, nullable=False, default=False)
     primary = Column(BOOLEAN, nullable=False, default=False)
 

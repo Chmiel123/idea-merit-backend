@@ -12,7 +12,7 @@ class EmailVerification(db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'profile'}
 
     email = Column(TEXT, ForeignKey('profile.account_email.email', ondelete='CASCADE'), primary_key=True, unique=True, nullable=False)
-    verification_key = Column(TEXT, nullable=False)
+    verification_key = Column(TEXT, nullable=False, index=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, email):

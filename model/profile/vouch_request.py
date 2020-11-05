@@ -11,8 +11,8 @@ class VouchRequest(db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'profile'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
-    top_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
-    bottom_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False)
+    top_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False, index=True)
+    bottom_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), unique=False, nullable=False, index=True)
     top_accept = Column(BOOLEAN, nullable=False, default=False)
     bottom_accept = Column(BOOLEAN, nullable=False, default=False)
 

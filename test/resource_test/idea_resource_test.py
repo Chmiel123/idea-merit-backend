@@ -9,7 +9,7 @@ from logic import idea_logic
 
 class IdeaResourceTest(AppBaseTestCase):
 
-    def test_make_vouch_request_and_accept_and_delete(self):
+    def test_create_idea_and_get(self):
         self.register_and_login('user1')
 
         a1 = Account.find_by_username('user1')

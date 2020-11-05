@@ -13,7 +13,7 @@ class PasswordReset(db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'profile'}
 
     account_id = Column(UUID(as_uuid=True), ForeignKey('profile.account.id', ondelete='CASCADE'), primary_key=True, unique=True, nullable=False)
-    verification_key = Column(TEXT, nullable=False)
+    verification_key = Column(TEXT, nullable=False, index=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, account_id: uuid):
