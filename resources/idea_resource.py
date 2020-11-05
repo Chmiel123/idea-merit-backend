@@ -18,6 +18,10 @@ idea_post_parser.add_argument('name', help = 'This field cannot be blank', requi
 idea_post_parser.add_argument('content', help = 'This field cannot be blank', required = True)
 idea_post_parser.add_argument('initial_resource', help = 'This field cannot be blank', required = True, type=float)
 
+vote_parser = reqparse.RequestParser()
+vote_parser.add_argument('idea_id', help = 'This field cannot be blank', required = True)
+vote_parser.add_argument('resource', help = 'This field cannot be blank', required = True)
+
 class Idea(Resource):
     def get(self):
         try:
@@ -48,4 +52,10 @@ class Idea(Resource):
 class VoteIdea(Resource):
     @jwt_required
     def post(self):
-        pass
+        account = Account.find_by_username(get_jwt_identity())
+        data = vote_parser.parse_args()
+        try:
+            result = idea_logic.vote(account, data['idea_id'], float(data['resource']))
+            return response.ok(result)
+        except IMException as e:
+            return response.error(e.args[0])

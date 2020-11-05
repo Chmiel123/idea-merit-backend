@@ -26,6 +26,8 @@ def create_root_idea(name: str, content: str) -> Idea:
 def create_idea(author: Account, parent_id: uuid, name: str, content: str, initial_resource: float) -> Idea:
     if author.get_total_resource() < initial_resource:
         raise IMException('Not enough resource')
+    if initial_resource < 0:
+        raise IMException('Cannot vote with negative resource')
     if not parent_id:
         raise IMException('Parent idea not specified')
     found_parent = Idea.find_by_id(parent_id)
@@ -37,3 +39,19 @@ def create_idea(author: Account, parent_id: uuid, name: str, content: str, initi
     vote_event = VoteEvent(VoteEventType.positive, author.id, new_idea.id, initial_resource)
     vote_event.save_to_db()
     return new_idea
+
+def vote(votee: Account, idea_id: uuid, resource: float) -> str:
+    if votee.get_total_resource() < resource:
+        raise IMException('Not enough resource')
+    if not idea_id:
+        raise IMException('Invalid idea id')
+    if resource < 0:
+        raise IMException('Cannot vote with negative resource')
+    found_idea = Idea.find_by_id(idea_id)
+    if not found_idea:
+        raise IMException('Idea not found')
+    votee.subtract_resource(resource)
+    found_idea.add_resource(resource)
+    vote_event = VoteEvent(VoteEventType.positive, votee.id, found_idea.id, resource)
+    vote_event.save_to_db()
+    return 'Vote succesful'

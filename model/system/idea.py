@@ -27,6 +27,7 @@ class Idea(db.Base, PostgresSerializerMixin):
 
     def add_resource(self, amount: float):
         self.end_of_life = self.end_of_life + datetime.timedelta(hours=amount)
+        self.save_to_db()
 
     def save_to_db(self):
         db.session.add(self)
