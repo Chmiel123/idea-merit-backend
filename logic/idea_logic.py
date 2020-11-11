@@ -33,6 +33,10 @@ def create_idea(author: Account, parent_id: uuid, name: str, content: str, initi
     found_parent = Idea.find_by_id(parent_id)
     if not found_parent:
         raise IMException('Parent idea not found')
+    found_duplicate = Idea.find_by_name(name)
+    if found_duplicate:
+        raise IMException('Idea with the same name already exists')
+    
     author.subtract_resource(initial_resource)
     new_idea = Idea(parent_id, author.id, name, content)
     add_resource_parent(new_idea, initial_resource * config['vote']['vote_resource_multiplier'])
@@ -42,6 +46,8 @@ def create_idea(author: Account, parent_id: uuid, name: str, content: str, initi
     return new_idea
 
 def vote(votee: Account, idea_id: uuid, resource: float) -> str:
+    if not votee:
+        raise IMException('Invalid votee')
     if votee.get_total_resource() < resource:
         raise IMException('Not enough resource')
     if not idea_id:

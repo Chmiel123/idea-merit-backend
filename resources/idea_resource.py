@@ -27,9 +27,15 @@ class Idea(Resource):
         try:
             data = idea_get_parser.parse_args()
             if data['id']:
-                return idea_logic.get_by_id(data['id']).to_dict()
+                found = idea_logic.get_by_id(data['id'])
+                if not found:
+                    return response.error('Idea not found')
+                return found.to_dict()
             elif data['name']:
-                return idea_logic.get_by_name(data['name']).to_dict()
+                found = idea_logic.get_by_name(data['name'])
+                if not found:
+                    return response.error('Idea not found')
+                return found.to_dict()
             elif data['parent_id']:
                 return [x.to_dict() for x in idea_logic.get_by_parent_id(data['parent_id'])]
             elif data['author_id']:
