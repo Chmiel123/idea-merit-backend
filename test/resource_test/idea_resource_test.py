@@ -61,8 +61,8 @@ class IdeaResourceTest(AppBaseTestCase):
         result = self.get_auth(
             f'/idea?author_id={a1.id}'
         )
-        self.assertEqual(result.json[0]['name'], 'idea1')
-        self.assertEqual(result.json[1]['name'], 'idea2')
+        self.assertEqual(result.json[1]['name'], 'idea1')
+        self.assertEqual(result.json[0]['name'], 'idea2')
         result = self.get_auth(
             f'/idea'
         )

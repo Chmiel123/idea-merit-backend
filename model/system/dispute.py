@@ -47,5 +47,5 @@ class Dispute(db.Base, PostgresSerializerMixin):
         return db.session.query(Dispute).filter_by(idea_id = idea_id).first()
 
     @staticmethod
-    def find_by_author_id(author_id):
-        return db.session.query(Dispute).filter_by(author_id = author_id).all()
+    def find_by_author_id(author_id, page=0, pagesize=10):
+        return db.session.query(Dispute).filter_by(author_id = author_id).limit(pagesize).offset(pagesize * page).all()

@@ -33,9 +33,9 @@ class VoteEvent(db.Base, PostgresSerializerMixin):
         db.session.commit()
     
     @staticmethod
-    def find_by_origin_id(origin_id):
-        return db.session.query(VoteEvent).filter_by(origin_id = origin_id).order_by(VoteEvent.created_date.desc()).all()
+    def find_by_origin_id(origin_id, page=0, pagesize=10):
+        return db.session.query(VoteEvent).filter_by(origin_id = origin_id).order_by(VoteEvent.created_date.desc()).limit(pagesize).offset(pagesize * page).all()
     
     @staticmethod
-    def find_by_target_id(target_id):
-        return db.session.query(VoteEvent).filter_by(target_id = target_id).order_by(VoteEvent.created_date.desc()).all()
+    def find_by_target_id(target_id, page=0, pagesize=10):
+        return db.session.query(VoteEvent).filter_by(target_id = target_id).order_by(VoteEvent.created_date.desc()).limit(pagesize).offset(pagesize * page).all()

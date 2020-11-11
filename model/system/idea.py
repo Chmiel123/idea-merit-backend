@@ -48,9 +48,9 @@ class Idea(db.Base, PostgresSerializerMixin):
         return db.session.query(Idea).filter_by(name = name).first()
 
     @staticmethod
-    def find_by_author_id(author_id):
-        return db.session.query(Idea).filter_by(author_id = author_id).all()
+    def find_by_author_id(author_id, page=0, pagesize=10):
+        return db.session.query(Idea).filter_by(author_id = author_id).order_by(Idea.created_date.desc()).limit(pagesize).offset(pagesize * page).all()
 
     @staticmethod
-    def find_by_parent_id(parent_id):
-        return db.session.query(Idea).filter_by(parent_id = parent_id).all()
+    def find_by_parent_id(parent_id, page=0, pagesize=10):
+        return db.session.query(Idea).filter_by(parent_id = parent_id).order_by(Idea.created_date.desc()).limit(pagesize).offset(pagesize * page).all()

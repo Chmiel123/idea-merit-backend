@@ -25,12 +25,12 @@ class IdeaLogicTest(DBBaseTestCase):
         idea6 = idea_logic.create_idea(a, idea5.id, 'idea6', 'content', 0)
 
         idea_logic.vote(a, idea6.id, 1024)
-        self.assertAlmostEqual(1024 * config['vote']['vote_resource_multiplier'], idea6.remaining_life(), 3)
-        self.assertAlmostEqual(512 * config['vote']['vote_resource_multiplier'], idea5.remaining_life(), 3)
-        self.assertAlmostEqual(256 * config['vote']['vote_resource_multiplier'], idea4.remaining_life(), 3)
-        self.assertAlmostEqual(128 * config['vote']['vote_resource_multiplier'], idea3.remaining_life(), 3)
-        self.assertAlmostEqual(64 * config['vote']['vote_resource_multiplier'], idea2.remaining_life(), 3)
-        self.assertAlmostEqual(32 * config['vote']['vote_resource_multiplier'], idea1.remaining_life(), 3)
+        self.assertAlmostEqual(1024 * config['vote']['vote_resource_multiplier'], idea6.remaining_life(), 2)
+        self.assertAlmostEqual(512 * config['vote']['vote_resource_multiplier'], idea5.remaining_life(), 2)
+        self.assertAlmostEqual(256 * config['vote']['vote_resource_multiplier'], idea4.remaining_life(), 2)
+        self.assertAlmostEqual(128 * config['vote']['vote_resource_multiplier'], idea3.remaining_life(), 2)
+        self.assertAlmostEqual(64 * config['vote']['vote_resource_multiplier'], idea2.remaining_life(), 2)
+        self.assertAlmostEqual(32 * config['vote']['vote_resource_multiplier'], idea1.remaining_life(), 2)
         self.assertAlmostEqual(0, root.remaining_life(), 3)
 
     def test_find(self):
@@ -51,11 +51,11 @@ class IdeaLogicTest(DBBaseTestCase):
         idea = idea_logic.get_by_name('root')
         self.assertEqual(idea, root)
         idea = idea_logic.get_by_author_id(a.id)
-        self.assertEqual(idea[0], idea1)
-        self.assertEqual(idea[1], idea2)
+        self.assertEqual(idea[1], idea1)
+        self.assertEqual(idea[0], idea2)
         idea = idea_logic.get_by_parent_id(root.id)
-        self.assertEqual(idea[0], idea1)
-        self.assertEqual(idea[1], idea2)
+        self.assertEqual(idea[1], idea1)
+        self.assertEqual(idea[0], idea2)
 
     def test_create_idea(self):
         a = Account('user')

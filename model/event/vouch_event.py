@@ -33,13 +33,13 @@ class VouchEvent(db.Base, PostgresSerializerMixin):
         db.session.commit()
     
     @staticmethod
-    def find_by_ids(top_id, bottom_id):
-        return db.session.query(VouchEvent).filter_by(top_id = top_id, bottom_id = bottom_id).order_by(VouchEvent.created_date.desc()).all()
+    def find_by_ids(top_id, bottom_id, page=0, pagesize=10):
+        return db.session.query(VouchEvent).filter_by(top_id = top_id, bottom_id = bottom_id).order_by(VouchEvent.created_date.desc()).limit(pagesize).offset(pagesize * page).all()
 
     @staticmethod
-    def find_by_top_id(top_id):
-        return db.session.query(VouchEvent).filter_by(top_id = top_id).order_by(VouchEvent.created_date.desc()).all()
+    def find_by_top_id(top_id, page=0, pagesize=10):
+        return db.session.query(VouchEvent).filter_by(top_id = top_id).order_by(VouchEvent.created_date.desc()).limit(pagesize).offset(pagesize * page).all()
 
     @staticmethod
-    def find_by_bottom_id(bottom_id):
-        return db.session.query(VouchEvent).filter_by(bottom_id = bottom_id).order_by(VouchEvent.created_date.desc()).all()
+    def find_by_bottom_id(bottom_id, page=0, pagesize=10):
+        return db.session.query(VouchEvent).filter_by(bottom_id = bottom_id).order_by(VouchEvent.created_date.desc()).limit(pagesize).offset(pagesize * page).all()
