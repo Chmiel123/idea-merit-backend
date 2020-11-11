@@ -43,7 +43,7 @@ class Dispute(db.Base, PostgresSerializerMixin):
         db.session.commit()
 
     @staticmethod
-    def find_by_id(idea_id):
+    def find_by_idea_id(idea_id):
         return db.session.query(Dispute).filter_by(idea_id = idea_id).first()
 
     @staticmethod

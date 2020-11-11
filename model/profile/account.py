@@ -20,6 +20,7 @@ class Account(db.Base, PostgresSerializerMixin):
     virtual_resource_start_date = Column(DateTime, default=datetime.datetime.utcnow)
     virtual_resource_speed = Column(FLOAT, default=0.0)
     virtual_resource_accrued = Column(FLOAT, default=0.0)
+    total_resource_spent = Column(FLOAT, default=0.0)
 
     account_password = relationship('AccountPassword', uselist=False, backref = 'account')
     emails = relationship('AccountEmail', backref = 'account')
@@ -53,6 +54,7 @@ class Account(db.Base, PostgresSerializerMixin):
         if amount > self.update_total_resource():
             return 0
         self.virtual_resource_accrued -= amount
+        self.total_resource_spent += amount
         self.save_to_db()
         return amount
 

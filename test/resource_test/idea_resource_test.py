@@ -3,6 +3,7 @@ import json
 import datetime
 
 from test.app_base_test_case import AppBaseTestCase
+from config.config import config
 from model.system.idea import Idea
 from model.profile.account import Account
 from model.profile.email_verification import EmailVerification
@@ -68,5 +69,6 @@ class IdeaResourceTest(AppBaseTestCase):
         )
         self.assertEqual(result.json['status'], 'Ok')
         idea = Idea.find_by_name('idea1')
-        self.assertAlmostEqual((idea.end_of_life - datetime.datetime.utcnow()).total_seconds() / 60 / 60, 72, 3)
+        
+        self.assertAlmostEqual(idea.remaining_life(), 72 * config['vote']['vote_resource_multiplier'], 3)
         

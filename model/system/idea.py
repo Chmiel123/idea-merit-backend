@@ -13,21 +13,27 @@ class Idea(db.Base, PostgresSerializerMixin):
     parent_id = Column(UUID(as_uuid=True), nullable=True, index=True)
     author_id = Column(UUID(as_uuid=True), nullable=True, index=True)
     name = Column(TEXT, nullable=False, unique=True, index=True)
-    content = Column(TEXT, nullable=False, unique=True)
+    content = Column(TEXT, nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     end_of_life = Column(DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, parent_id: uuid, author_id: uuid, name: str, content: str, initial_life: float):
+    def __init__(self, parent_id: uuid, author_id: uuid, name: str, content: str):
         self.parent_id = parent_id
         self.author_id = author_id
         self.name = name
         self.content = content
         self.created_date = datetime.datetime.utcnow()
-        self.end_of_life = datetime.datetime.utcnow() + datetime.timedelta(hours=initial_life)
+        self.end_of_life = datetime.datetime.utcnow()
 
     def add_resource(self, amount: float):
         self.end_of_life = self.end_of_life + datetime.timedelta(hours=amount)
         self.save_to_db()
+
+    def remaining_life(self) -> float:
+        return (self.end_of_life - datetime.datetime.utcnow()).total_seconds() / 60 / 60
+
+    def is_root(self) -> bool:
+        return self.parent_id is None
 
     def save_to_db(self):
         db.session.add(self)

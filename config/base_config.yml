@@ -11,3 +11,5 @@ limit:
   dispute_duration_hours: 72
 vouch:
   resource_speed_per_vouch: "4: 0.2, 5: 0.4, 6: 0.6, 7: 0.8, 8: 1"
+vote:
+  vote_resource_multiplier: 0.5
