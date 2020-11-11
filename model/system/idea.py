@@ -1,6 +1,6 @@
 import uuid
 import datetime
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, FLOAT
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
@@ -17,6 +17,9 @@ class Idea(db.Base, PostgresSerializerMixin):
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     end_of_life = Column(DateTime, default=datetime.datetime.utcnow)
 
+    total_life_direct = Column(FLOAT)
+    total_life_inherited = Column(FLOAT)
+
     def __init__(self, parent_id: uuid, author_id: uuid, name: str, content: str):
         self.parent_id = parent_id
         self.author_id = author_id
@@ -24,10 +27,21 @@ class Idea(db.Base, PostgresSerializerMixin):
         self.content = content
         self.created_date = datetime.datetime.utcnow()
         self.end_of_life = datetime.datetime.utcnow()
+        self.total_life_direct = 0.0
+        self.total_life_inherited = 0.0
 
-    def add_resource(self, amount: float):
+    def add_resource_direct(self, amount: float):
         self.end_of_life = self.end_of_life + datetime.timedelta(hours=amount)
+        self.total_life_direct += amount
         self.save_to_db()
+
+    def add_resource_inherited(self, amount: float):
+        self.end_of_life = self.end_of_life + datetime.timedelta(hours=amount)
+        self.total_life_inherited += amount
+        self.save_to_db()
+
+    def total_life(self) -> float:
+        return self.total_life_direct + self.total_life_inherited
 
     def remaining_life(self) -> float:
         return (self.end_of_life - datetime.datetime.utcnow()).total_seconds() / 60 / 60

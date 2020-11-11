@@ -11,6 +11,7 @@ idea_get_parser.add_argument('id', location='args', required = False)
 idea_get_parser.add_argument('name', location='args', required = False)
 idea_get_parser.add_argument('parent_id', location='args', required = False)
 idea_get_parser.add_argument('author_id', location='args', required = False)
+idea_get_parser.add_argument('page', location='args', required = False, type = int)
 
 idea_post_parser = reqparse.RequestParser()
 idea_post_parser.add_argument('parent_id', help = 'This field cannot be blank', required = True)
@@ -37,9 +38,9 @@ class Idea(Resource):
                     return response.error('Idea not found')
                 return found.to_dict()
             elif data['parent_id']:
-                return [x.to_dict() for x in idea_logic.get_by_parent_id(data['parent_id'])]
+                return [x.to_dict() for x in idea_logic.get_by_parent_id(data['parent_id'], data['page'])]
             elif data['author_id']:
-                return [x.to_dict() for x in idea_logic.get_by_author_id(data['author_id'])]
+                return [x.to_dict() for x in idea_logic.get_by_author_id(data['author_id'], data['page'])]
             else:
                 return response.error('Invalid argument')
         except IMException as e:

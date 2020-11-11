@@ -26,7 +26,9 @@ class IdeaLogicTest(DBBaseTestCase):
 
         idea_logic.vote(a, idea6.id, 1024)
         self.assertAlmostEqual(1024 * config['vote']['vote_resource_multiplier'], idea6.remaining_life(), 2)
+        self.assertAlmostEqual(1024 * config['vote']['vote_resource_multiplier'], idea6.total_life_direct, 2)
         self.assertAlmostEqual(512 * config['vote']['vote_resource_multiplier'], idea5.remaining_life(), 2)
+        self.assertAlmostEqual(512 * config['vote']['vote_resource_multiplier'], idea5.total_life_inherited, 2)
         self.assertAlmostEqual(256 * config['vote']['vote_resource_multiplier'], idea4.remaining_life(), 2)
         self.assertAlmostEqual(128 * config['vote']['vote_resource_multiplier'], idea3.remaining_life(), 2)
         self.assertAlmostEqual(64 * config['vote']['vote_resource_multiplier'], idea2.remaining_life(), 2)
