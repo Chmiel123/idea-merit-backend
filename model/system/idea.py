@@ -1,6 +1,6 @@
 import uuid
 import datetime
-from sqlalchemy import Column, DateTime, FLOAT
+from sqlalchemy import Column, UniqueConstraint, DateTime, FLOAT
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
@@ -12,13 +12,15 @@ class Idea(db.Base, PostgresSerializerMixin):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     parent_id = Column(UUID(as_uuid=True), nullable=True, index=True)
     author_id = Column(UUID(as_uuid=True), nullable=True, index=True)
-    name = Column(TEXT, nullable=False, unique=True, index=True)
+    name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     end_of_life = Column(DateTime, default=datetime.datetime.utcnow)
 
     total_life_direct = Column(FLOAT)
     total_life_inherited = Column(FLOAT)
+
+    UniqueConstraint('name', 'parent_id')
 
     def __init__(self, parent_id: uuid, author_id: uuid, name: str, content: str):
         self.parent_id = parent_id
@@ -60,6 +62,10 @@ class Idea(db.Base, PostgresSerializerMixin):
     @staticmethod
     def find_by_name(name):
         return db.session.query(Idea).filter_by(name = name).first()
+
+    @staticmethod
+    def find_by_name_and_parent(name, parent_id):
+        return db.session.query(Idea).filter_by(name = name, parent_id = parent_id).first()
 
     @staticmethod
     def find_by_author_id(author_id, page=0, pagesize=10):

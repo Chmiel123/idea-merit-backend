@@ -70,10 +70,16 @@ class IdeaLogicTest(DBBaseTestCase):
 
         idea1 = idea_logic.create_idea(a, root.id, 'idea1', 'content', 0)
 
+        # not enough resource
         self.assertRaises(IMException, idea_logic.create_idea, a, root.id, 'idea2', 'content', 3000)
+        # negative resource
         self.assertRaises(IMException, idea_logic.create_idea, a, root.id, 'idea2', 'content', -1)
+        # None parent
         self.assertRaises(IMException, idea_logic.create_idea, a, None, 'idea2', 'content', 3000)
+        # idea with duplicate name and parent
         self.assertRaises(IMException, idea_logic.create_idea, a, root.id, 'idea1', 'content', 1000)
+        idea11 = idea_logic.create_idea(a, idea1.id, 'idea1', 'content', 0)
+        # parent uuid not found
         self.assertRaises(IMException, idea_logic.create_idea, a, uuid.uuid4(), 'idea1', 'content', 1000)
 
     def test_vote(self):

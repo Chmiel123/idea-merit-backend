@@ -37,7 +37,7 @@ def create_idea(author: Account, parent_id: uuid, name: str, content: str, initi
     found_parent = Idea.find_by_id(parent_id)
     if not found_parent:
         raise IMException('Parent idea not found')
-    found_duplicate = Idea.find_by_name(name)
+    found_duplicate = Idea.find_by_name_and_parent(name, parent_id)
     if found_duplicate:
         raise IMException('Idea with the same name already exists')
     
