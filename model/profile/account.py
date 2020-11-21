@@ -13,7 +13,7 @@ class Account(db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'profile'}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    name = Column(TEXT, nullable=False, unique=True, index=True)
+    name = Column(TEXT, nullable=False, index=True)
     domain = Column(TEXT, nullable=True, index=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
