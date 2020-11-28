@@ -64,6 +64,22 @@ class UserResourceTest(AppBaseTestCase):
         )
         self.assertIsNotNone(result.json['id'])
 
+    def test_get_account(self):
+        self.register_and_login('john', 'pass')
+        self.register_and_login('jane', 'pass')
+        result = self.app.get(
+            '/account?name=john'
+        )
+        self.assertEqual(result.json['name'], 'john')
+        result = self.app.get(
+            f"/account?id={result.json['id']}"
+        )
+        self.assertEqual(result.json['name'], 'john')
+        result = self.app.get(
+            '/account?name=jane'
+        )
+        self.assertEqual(result.json['name'], 'jane')
+
     def test_email(self):
         self.register_and_login()
         result = self.post_auth(

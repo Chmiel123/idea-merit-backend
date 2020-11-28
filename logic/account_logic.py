@@ -1,3 +1,4 @@
+import uuid
 import datetime
 from util.exception import IMException
 from model.profile.account import Account
@@ -5,6 +6,12 @@ from model.profile.account_password import AccountPassword
 from model.profile.account_email import AccountEmail
 from model.profile.password_reset import PasswordReset
 from config.config import config
+
+def get_by_id(id: uuid) -> Account:
+    return Account.find_by_id(id)
+
+def get_by_username(name: str) -> Account:
+    return Account.find_by_username(name)
 
 def create_account_with_password(username: str, password: str):
     #split domain if exists

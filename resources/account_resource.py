@@ -9,6 +9,11 @@ from config.config import config
 from util import response
 from util.exception import IMException
 
+account_get_parser = reqparse.RequestParser()
+account_get_parser.add_argument('id', location='args', required = False)
+account_get_parser.add_argument('name', location='args', required = False)
+account_get_parser.add_argument('domain', location='args', required = False)
+
 login_parser = reqparse.RequestParser()
 login_parser.add_argument('username', help = 'This field cannot be blank', required = True)
 login_parser.add_argument('password', help = 'This field cannot be blank', required = True)
@@ -103,6 +108,21 @@ class CurrentAccount(Resource):
             'name': account.name,
             'domain': account.domain,
             'created_date': str(account.created_date)
+        }
+
+class Accounts(Resource):
+    def get(self):
+        data = account_get_parser.parse_args()
+        account = None
+        if data['id']:
+            account = account_logic.get_by_id(data['id'])
+        elif data['name']:
+            account = account_logic.get_by_username(data['name'])
+
+        return {
+            'id': str(account.id),
+            'name': account.name,
+            'domain': account.domain
         }
 
 class PasswordResetGen(Resource):

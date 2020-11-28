@@ -24,6 +24,7 @@ def index():
     return 'pong'
 
 
+api.add_resource(resources.account_resource.Accounts, '/account')
 api.add_resource(resources.account_resource.AccountRegistration, '/account/register')
 api.add_resource(resources.account_resource.AccountLogin, '/account/login')
 api.add_resource(resources.account_resource.TokenRefresh, '/account/refresh')

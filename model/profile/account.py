@@ -59,7 +59,7 @@ class Account(db.Base, PostgresSerializerMixin):
         return amount
 
     @staticmethod
-    def find_by_id(id):
+    def find_by_id(id: uuid):
         return db.session.query(Account).filter_by(id = id).first()
 
     @staticmethod
