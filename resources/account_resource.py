@@ -14,6 +14,11 @@ account_get_parser.add_argument('id', location='args', required = False)
 account_get_parser.add_argument('name', location='args', required = False)
 account_get_parser.add_argument('domain', location='args', required = False)
 
+register_parser = reqparse.RequestParser()
+register_parser.add_argument('username', help = 'This field cannot be blank', required = True)
+register_parser.add_argument('password', help = 'This field cannot be blank', required = True)
+register_parser.add_argument('email', required = False)
+
 login_parser = reqparse.RequestParser()
 login_parser.add_argument('username', help = 'This field cannot be blank', required = True)
 login_parser.add_argument('password', help = 'This field cannot be blank', required = True)
@@ -34,9 +39,18 @@ email_verification_parser.add_argument('verify', help = 'This field cannot be bl
 
 class AccountRegistration(Resource):
     def post(self):
-        data = login_parser.parse_args()
+        data = register_parser.parse_args()
         try:
-            account_logic.create_account_with_password(data['username'], data['password'])
+            new_account, _ = account_logic.create_account_with_password(data['username'], data['password'])
+
+            if data['email']:
+                new_account_email = AccountEmail(
+                    account = new_account,
+                    email = data['email'],
+                    primary = True
+                )
+                new_account_email.save_to_db()
+                email_logic.generate_verification(new_account_email)
 
             access_token = create_access_token(identity = data['username'])
             refresh_token = create_refresh_token(identity = data['username'])

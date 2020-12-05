@@ -21,6 +21,20 @@ class UserResourceTest(AppBaseTestCase):
         user = self.login('user', 'wrong')
         self.assertIsNone(user)
 
+    def test_register_with_email(self):
+        result = self.app.post(
+            '/account/register',
+            data=dict(username = 'user', password = 'pass', email = 'user@example.com'),
+            follow_redirects=True
+        )
+        user = self.login('user', 'pass')
+        self.assertEqual(user.name, 'user')
+        result = self.get_auth(
+            '/account/email'
+        )
+        self.assertEqual(result.json['emails'][0]['email'], 'user@example.com')
+
+
     def test_password_reset(self):
         self.register('user', 'pass')
         user = self.login('user', 'pass')
