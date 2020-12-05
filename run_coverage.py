@@ -9,7 +9,8 @@ COV = coverage.coverage(
     omit=[
         'test/*',
         'env/*',
-        '/usr/*'
+        '/usr/*',
+        'C:/Program Files/*'
     ]
 )
 COV.start()
