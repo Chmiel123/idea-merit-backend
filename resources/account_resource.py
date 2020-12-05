@@ -107,7 +107,11 @@ class CurrentAccount(Resource):
             'id': str(account.id),
             'name': account.name,
             'domain': account.domain,
-            'created_date': str(account.created_date)
+            'created_date': str(account.created_date),
+            'virtual_resource_start_date': str(account.virtual_resource_start_date),
+            'virtual_resource_speed': account.virtual_resource_speed,
+            'virtual_resource_accrued': account.virtual_resource_accrued,
+            'total_resource_spent': account.total_resource_spent
         }
 
 class Accounts(Resource):
