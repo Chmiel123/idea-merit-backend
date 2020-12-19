@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, inputs
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity
 from model.profile.account import Account
 from model.profile.account_password import AccountPassword
@@ -32,7 +32,7 @@ password_reset_verify_parser.add_argument('password', help = 'This field cannot 
 
 email_parser = reqparse.RequestParser()
 email_parser.add_argument('email', help = 'This field cannot be blank', required = True)
-email_parser.add_argument('primary')
+email_parser.add_argument('primary', type = inputs.boolean)
 
 email_verification_parser = reqparse.RequestParser()
 email_verification_parser.add_argument('verify', help = 'This field cannot be blank', location='args', required = True)

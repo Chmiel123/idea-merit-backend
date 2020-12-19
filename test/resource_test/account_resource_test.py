@@ -188,11 +188,16 @@ class UserResourceTest(AppBaseTestCase):
         )
         result = self.post_auth(
             '/account/email',
-            data=dict(email = 'user@example.net')
+            data=dict(email = 'user@example.net', primary = False)
         )
+        result = self.get_auth(
+            '/account/email'
+        )
+        self.assertTrue(result.json['emails'][0]['primary'])
+        self.assertFalse(result.json['emails'][1]['primary'])
         result = self.post_auth(
             '/account/email',
-            data=dict(email = 'user@example.eu', primary = True)
+            data=dict(email = 'user@example.eu')
         )
         result = self.post_auth(
             '/account/email',
