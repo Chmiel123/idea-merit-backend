@@ -19,6 +19,14 @@ api = Api(app)
 if __name__ == "__main__":
     app.run()
 
+@jwt.expired_token_loader
+def my_expired_token_callback(expired_token):
+    token_type = expired_token['type']
+    return jsonify({
+        'status': 'Error',
+        'message': 'The {} token has expired'.format(token_type)
+    }), 401
+
 @app.route('/ping')
 def index():
     return 'pong'

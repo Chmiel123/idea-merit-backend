@@ -65,9 +65,8 @@ class UserResourceTest(AppBaseTestCase):
         self.register('user', 'pass')
         user = self.login('user', 'pass')
         self.assertEqual(user.name, 'user')
-        result = self.app.get(
-            '/account/refresh',
-            headers={'Authorization': f'Bearer {user.refresh_token}'},
+        result = self.get_auth(
+            '/account/refresh'
         )
         self.assertIsNotNone(result.json['access_token'])
 
