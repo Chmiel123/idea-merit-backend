@@ -2,6 +2,12 @@
 
 import unittest
 import sys
+import os
+
+abspath = os.path.abspath(__file__)
+path = os.path.dirname(abspath) + '\\src'
+os.chdir(path)
+sys.path.insert(1, path)
 
 pattern = ''
 if len(sys.argv) > 1:
