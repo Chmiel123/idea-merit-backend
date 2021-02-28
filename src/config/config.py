@@ -15,3 +15,9 @@ class Config:
                 self.cfg = deep_update(self.cfg, additional_config)
         global config
         config = self.cfg
+
+def get(filename: str):
+    content = None
+    with open(filename, 'r') as ymlfile:
+        content = yaml.safe_load(ymlfile)
+    return content

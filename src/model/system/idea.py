@@ -51,6 +51,11 @@ class Idea(db.Base, PostgresSerializerMixin):
     def is_root(self) -> bool:
         return self.parent_id is None
 
+    def is_dead(self) -> bool:
+        if (self.is_root()):
+            return False
+        return self.remaining_life() < 0
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

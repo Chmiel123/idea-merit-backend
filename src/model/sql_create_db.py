@@ -1,10 +1,9 @@
 import os
 import os.path
 import importlib
+import sys
 
 def sql_create_db(db):
-# # db = DB(Config('test'))
-# db = DB(Config())
     schemas = []
 
     file_dir = os.path.realpath('model')
@@ -18,7 +17,8 @@ def sql_create_db(db):
             filename_without_extension = os.path.splitext(filename)[0]
             fullname = f'model.{schema}.{filename_without_extension}'
             print(fullname)
-            importlib.import_module(fullname)
+            if 'src.' + fullname not in sys.modules:
+                importlib.import_module(fullname)
 
 
     for schema in schemas:

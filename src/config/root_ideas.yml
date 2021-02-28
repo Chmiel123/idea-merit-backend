@@ -1,0 +1,14 @@
+- name: Rules
+  content: >
+    This is a forum dedicated to creating and promoting ideas based on their merit alone.
+    This is accomplished thanks to a limited resource used to give 'likes' to posts.
+    Do not post anything that is illegal.
+- name: Instance
+  content:
+    This is a forum dedicated to this ideacy instance.
+- name: Coding
+  content:
+    This is a forum dedicated to any coding/software development/programming ideas.
+- name: Misc
+  content:
+    This is a forum dedicated ideas not fit to any previous forum.
