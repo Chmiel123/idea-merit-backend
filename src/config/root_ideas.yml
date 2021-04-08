@@ -9,6 +9,9 @@
 - name: Coding
   content:
     This is a forum dedicated to any coding/software development/programming ideas.
+- name: Food
+  content:
+    This is a forum dedicated to food. Share recipes, hints and anything related to food.
 - name: Misc
   content:
     This is a forum dedicated ideas not fit to any previous forum.
