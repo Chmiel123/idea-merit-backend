@@ -42,7 +42,7 @@ class Idea(Resource):
             elif data['author_id']:
                 return [x.to_dict() for x in idea_logic.get_by_author_id(data['author_id'], data['page'])]
             else:
-                return response.error('Invalid argument')
+                return [x.to_dict() for x in idea_logic.get_root_ideas(data['page'])]
         except IMException as e:
             return response.error(e.args[0])
 

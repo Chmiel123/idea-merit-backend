@@ -64,10 +64,6 @@ class IdeaResourceTest(AppBaseTestCase):
         self.assertEqual(result.json[1]['name'], 'idea1')
         self.assertEqual(result.json[0]['name'], 'idea2')
         result = self.get_auth(
-            f'/idea'
-        )
-        self.assertEqual(result.json['status'], 'Error')
-        result = self.get_auth(
             f'/idea?name=idea3'
         )
         self.assertEqual(result.json['status'], 'Error')
@@ -75,6 +71,26 @@ class IdeaResourceTest(AppBaseTestCase):
             f'/idea?id={uuid.uuid4()}'
         )
         self.assertEqual(result.json['status'], 'Error')
+
+    def test_create_idea_and_get_root_ideas(self):
+        self.register_and_login('user1')
+
+        a1 = Account.find_by_username('user1')
+        a1.virtual_resource_accrued = 1000
+        a1.save_to_db()
+
+        root_idea =idea_logic.create_root_idea('root1', 'root content.')
+        root_idea =idea_logic.create_root_idea('root2', 'root content.')
+        root_idea =idea_logic.create_root_idea('root3', 'root content.')
+
+        result = self.get_auth(
+            f'/idea'
+        )
+        obj = sorted(list(result.json), key = lambda x: x['name'])
+        
+        self.assertEqual(obj[0]['name'], 'root1')
+        self.assertEqual(obj[1]['name'], 'root2')
+        self.assertEqual(obj[2]['name'], 'root3')
 
     def test_vote_idea(self):
         self.register_and_login('user1')

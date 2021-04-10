@@ -22,6 +22,11 @@ def get_by_author_id(author_id: uuid, page: int = 0) -> List[Idea]:
         return Idea.find_by_author_id(author_id, page)
     return Idea.find_by_author_id(author_id)
 
+def get_root_ideas(page: int = 0) -> List[Idea]:
+    if page is not None:
+        return Idea.find_by_parent_id(None, page)
+    return Idea.find_by_parent_id(None)
+
 def create_root_idea(name: str, content: str) -> Idea:
     new_idea = Idea(None, None, name, content)
     new_idea.save_to_db()
