@@ -15,3 +15,10 @@
 - name: Misc
   content:
     This is a forum dedicated ideas not fit to any previous forum.
+- name: Apple juice
+  parent: Food
+  content: >
+    Ingredients:
+    - 1 kg apples
+    Instructions:
+    Put apples in a juicer. Done.
