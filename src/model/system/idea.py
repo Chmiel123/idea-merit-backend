@@ -1,6 +1,6 @@
 import uuid
 import datetime
-from sqlalchemy import Column, UniqueConstraint, DateTime, FLOAT
+from sqlalchemy import Column, UniqueConstraint, DateTime, FLOAT, INT
 from sqlalchemy.dialects.postgresql import UUID, TEXT
 from model.postgres_serializer import PostgresSerializerMixin
 from model.db import db
@@ -20,6 +20,8 @@ class Idea(db.Base, PostgresSerializerMixin):
     total_life_direct = Column(FLOAT)
     total_life_inherited = Column(FLOAT)
 
+    total_children = Column(INT)
+
     UniqueConstraint('name', 'parent_id')
 
     def __init__(self, parent_id: uuid, author_id: uuid, name: str, content: str):
@@ -31,6 +33,7 @@ class Idea(db.Base, PostgresSerializerMixin):
         self.end_of_life = datetime.datetime.utcnow()
         self.total_life_direct = 0.0
         self.total_life_inherited = 0.0
+        self.total_children = 0
 
     def add_resource_direct(self, amount: float):
         self.end_of_life = self.end_of_life + datetime.timedelta(hours=amount)

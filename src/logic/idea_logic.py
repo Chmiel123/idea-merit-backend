@@ -50,6 +50,11 @@ def create_idea(author: Account, parent_id: uuid, name: str, content: str, initi
     new_idea = Idea(parent_id, author.id, name, content)
     add_resource_direct(new_idea, initial_resource * config['vote']['vote_resource_multiplier'])
     new_idea.save_to_db()
+    # increment children counter for parent idea
+    parent_idea = Idea.find_by_id(new_idea.parent_id)
+    if parent_idea:
+        parent_idea.total_children += 1
+        parent_idea.save_to_db()
     vote_event = VoteEvent(VoteEventType.positive, author.id, new_idea.id, initial_resource)
     vote_event.save_to_db()
     return new_idea
