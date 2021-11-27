@@ -134,10 +134,12 @@ class Accounts(Resource):
     def get(self):
         data = account_get_parser.parse_args()
         account = None
-        if data['id']:
+        if data['id'] and data['id'] != 'null':
             account = account_logic.get_by_id(data['id'])
         elif data['name']:
             account = account_logic.get_by_username(data['name'])
+        else:
+            return response.error("Invalid account id")
 
         return {
             'id': str(account.id),

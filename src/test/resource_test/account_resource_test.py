@@ -92,6 +92,10 @@ class UserResourceTest(AppBaseTestCase):
             '/account?name=jane'
         )
         self.assertEqual(result.json['name'], 'jane')
+        result = self.app.get(
+            '/account?id=null'
+        )
+        self.assertEqual(result.json['status'], 'Error')
 
     def test_email(self):
         self.register_and_login()
