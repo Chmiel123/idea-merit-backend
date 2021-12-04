@@ -13,3 +13,4 @@ vouch:
   resource_speed_per_vouch: "4: 0.2, 5: 0.4, 6: 0.6, 7: 0.8, 8: 1"
 vote:
   vote_resource_multiplier: 0.5
+  gift_resource_to_new_accounts: 0.0

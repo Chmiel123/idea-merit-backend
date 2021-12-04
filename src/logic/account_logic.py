@@ -24,6 +24,7 @@ def create_account_with_password(username: str, password: str):
         raise IMException(f'User {username} already exists')
 
     new_account = Account(username)
+    new_account.virtual_resource_accrued = config['vote']['gift_resource_to_new_accounts']
     new_account.save_to_db()
     new_account_password = AccountPassword(new_account.id, password)
     new_account_password.save_to_db()
