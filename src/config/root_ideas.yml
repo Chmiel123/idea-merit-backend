@@ -1,11 +1,19 @@
-- name: Rules
-  content: >
-    This is a forum dedicated to creating and promoting ideas based on their merit alone.
-    This is accomplished thanks to a limited resource used to give 'likes' to posts.
-    Do not post anything that is illegal.
-- name: Instance
+- name: Ideacy
   content:
-    This is a forum dedicated to this ideacy instance.
+    This forum is dedicated to posts about the project itself.
+- name: About
+  parent: Ideacy
+  content: >
+    This website allows members to post content in a tree structure. Furthermore each post has an expiry date set by the users contribution of likes.
+    Each user accrues time as long as he is a member. This accrued time is used in likes on posts.
+    When a post expires it will no longer be visible on the site.
+    This website is an instance of Idea merit project at
+    https://gitlab.com/jakub.c/idea-merit-frontend
+    https://gitlab.com/jakub.c/idea-merit-backend
+- name: Rules
+  parent: Ideacy
+  content:
+    Do not post anything that is illegal.
 - name: Coding
   content:
     This is a forum dedicated to any coding/software development/programming ideas.
@@ -15,10 +23,3 @@
 - name: Misc
   content:
     This is a forum dedicated ideas not fit to any previous forum.
-- name: Apple juice
-  parent: Food
-  content: >
-    Ingredients:
-    - 1 kg apples
-    Instructions:
-    Put apples in a juicer. Done.
