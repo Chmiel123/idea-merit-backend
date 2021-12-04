@@ -1,6 +1,6 @@
 - name: Ideacy
   content:
-    This forum is dedicated to posts about the project itself.
+    This forum is dedicated to posts about the website.
 - name: About
   parent: Ideacy
   content: >
