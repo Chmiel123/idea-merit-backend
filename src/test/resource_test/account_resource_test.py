@@ -61,6 +61,15 @@ class UserResourceTest(AppBaseTestCase):
         user = self.login('user', 'pass2')
         self.assertEqual(user.name, 'user')
 
+    def test_login_with_email(self):
+        self.register_and_login()
+        result = self.post_auth(
+            '/account/email',
+            dict(email = 'user@example.com')
+        )
+        user = self.login('user@example.com', 'pass')
+        self.assertEqual(user.name, 'user')
+
     def test_login_refresh(self):
         self.register('user', 'pass')
         user = self.login('user', 'pass')

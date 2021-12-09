@@ -71,8 +71,8 @@ class AccountLogin(Resource):
         try:
             current_account = account_logic.login(data['username'], data['password'])
 
-            access_token = create_access_token(identity = data['username'], expires_delta=datetime.timedelta(hours=1))
-            refresh_token = create_refresh_token(identity = data['username'], expires_delta=datetime.timedelta(hours=1))
+            access_token = create_access_token(identity = current_account.name, expires_delta=datetime.timedelta(hours=1))
+            refresh_token = create_refresh_token(identity = current_account.name, expires_delta=datetime.timedelta(hours=1))
             return {
                 'status': 'Ok',
                 'message': f'Logged in as {current_account.name}',

@@ -31,16 +31,22 @@ def create_account_with_password(username: str, password: str):
 
     return new_account, new_account_password
 
-def login(username: str, password: str) -> Account:
-    current_account = Account.find_by_username(username)
+def login(username_or_email: str, password: str) -> Account:
+    current_account = Account.find_by_username(username_or_email)
 
-    if not current_account:
-        raise IMException(f'User {username} doesn\'t exist')
+    if current_account:
+        if AccountPassword.verify_hash(password, current_account.account_password.password):
+            return current_account
     
-    if AccountPassword.verify_hash(password, current_account.account_password.password):
-        return current_account
+    current_email = AccountEmail.find_by_email(username_or_email)
+    if current_email:
+        current_account = Account.find_by_id(current_email.account_id)
+        if current_account:
+            if AccountPassword.verify_hash(password, current_account.account_password.password):
+                return current_account
+    
     else:
-        raise IMException('Wrong credentials')
+        raise IMException('Wrong credentials.')
 
 def generate_password_reset(email: str):
     found_email_account = AccountEmail.find_by_email(email)

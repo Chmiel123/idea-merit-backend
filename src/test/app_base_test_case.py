@@ -112,7 +112,7 @@ class AppBaseTestCase(unittest.TestCase):
         info = self.get_auth('/account/current')
         user = UserStub(
             info.json['id'],
-            username,
+            info.json['name'],
             result.json['access_token'],
             result.json['refresh_token'],
             info.json,
