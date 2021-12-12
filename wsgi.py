@@ -9,7 +9,7 @@ sys.path.insert(1, path)
 from config.config import Config
 from model.db import DB, db
 
-DB(Config())
+DB(Config('prod'))
 
 from app import app
 
